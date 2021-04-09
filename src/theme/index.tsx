@@ -94,6 +94,10 @@ export function theme(darkMode: boolean): DefaultTheme {
     //shadows
     shadow1: darkMode ? '#000' : '#2F80ED',
 
+    fontFamily: `'Inter', sans-serif;`,
+
+    fontSize1: darkMode ? '100' : '300',
+
     // media queries
     mediaWidth: mediaWidthTemplates,
 
@@ -171,6 +175,11 @@ body {
 
 .menu-popover .popover-content {
   top: 70px !important;
+}
+
+.ion-date-time-picker-ismobile {
+  --background: ${({ theme }) => theme.bg2};
+  color: ${({ theme }) => theme.text1};
 }
 
 ${({ theme }) => theme.mediaWidth.upToMedium`

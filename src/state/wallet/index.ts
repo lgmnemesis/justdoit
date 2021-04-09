@@ -26,7 +26,7 @@ export function useAccountETHBalance() {
       setBalance(0)
       library?.off('block', getBalance)
     }
-  }, [account, library, chainId])
+  }, [account, library, getBalance, chainId])
 
   const balanceStr = balance === 0 ? '0' : balance.toPrecision(4)
   return {

@@ -1,3 +1,9 @@
+import NewChallenge from '../../components/NewChallenge'
+
 export default function HomePage() {
-  return <p>Home is here</p>
+  return (
+    <>
+      <NewChallenge />
+    </>
+  )
 }

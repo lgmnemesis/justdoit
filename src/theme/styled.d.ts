@@ -1,4 +1,7 @@
-import { FlattenSimpleInterpolation, ThemedCssFunction } from 'styled-components'
+import {
+  FlattenSimpleInterpolation,
+  ThemedCssFunction,
+} from 'styled-components'
 
 export type Color = string
 export interface Colors {
@@ -59,6 +62,10 @@ declare module 'styled-components' {
 
     // shadows
     shadow1: string
+
+    fontFamily: string
+
+    fontSize1: string
 
     // media queries
     mediaWidth: {

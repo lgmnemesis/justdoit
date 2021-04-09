@@ -215,7 +215,7 @@ export default function Header() {
             <img width={'30px'} src={Logo} alt="logo" />
           </RotateIcon>
         </Title>
-        <HeaderLinks>
+        {/* <HeaderLinks>
           <StyledNavLink id={`home-nav-link`} to={'/home'}>
             <Activity />
             <SpaceX />
@@ -231,7 +231,7 @@ export default function Header() {
             <SpaceX />
             <HideExtraSmall>Tab_3</HideExtraSmall>
           </StyledNavLink>
-        </HeaderLinks>
+        </HeaderLinks> */}
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
