@@ -1,3 +1,3 @@
-# UI Starter Interface
+# Just Do It UI Interface
 
-UI Starter Interface with a wallet connect 'uniswap like' flow, header and colors template
+JustDoIt forces you to reach your goals, or pay if you don’t.
