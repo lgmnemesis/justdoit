@@ -4,6 +4,7 @@ import { ChevronLeft } from 'react-feather'
 import DateTimePicker from '../DateTimePicker'
 import { TYPE } from '../../theme'
 import GoalInput from './GoalInput'
+import AmountInput from './AmountInput'
 import {
   ChallengeCard,
   SlidePrev,
@@ -11,19 +12,10 @@ import {
   SlideContainer,
   MarginY,
   Button,
-  AmountInputContainer,
-  AmountInputWrapper,
-  AmountInputSection,
-  AmountInputLabel,
-  BalanceSection,
-  BalanceLabel,
-  BalanceToken,
-  SpaceX,
 } from './styled'
-import EthLogo from '../../assets/images/ethereum-logo.png'
 
 const slideOpts = {
-  initialSlide: 2,
+  initialSlide: 0,
   speed: 400,
   grabCursor: false,
 }
@@ -38,7 +30,7 @@ let firstNextIndication = false
 
 export default function NewChallenge() {
   const slidesRef: any = useRef(null)
-  const amountInputRef: any = useRef(null)
+
   const [slidesIndex, setSlidesIndex] = useState(0)
   const [goalText, setgoalText] = useState('')
   const [amount, setAmount] = useState('')
@@ -63,24 +55,9 @@ export default function NewChallenge() {
     handleSlidesIndex()
   }
 
-  const handleAmountInput = (event: any) => {
-    const value: string = event.target.value
-    if (value.match('^[0-9]*[.,]?[0-9]*$')) {
-      setAmount(event.target.value)
-    }
-  }
-
   useEffect(() => {
     setSlidesDefaults()
   }, [])
-
-  useEffect(() => {
-    if (slidesIndex === 2) {
-      setTimeout(() => {
-        amountInputRef.current.focus()
-      }, 500)
-    }
-  }, [slidesIndex])
 
   let title = TITLE.START
   if (slidesIndex === 0 && firstNextIndication) {
@@ -93,9 +70,9 @@ export default function NewChallenge() {
 
   return (
     <>
-      <TYPE.largeHeader padding="3rem 10px" letterSpacing="3px">
+      <TYPE.LargeHeader padding="3rem 10px" letterSpacing="3px">
         {title}
-      </TYPE.largeHeader>
+      </TYPE.LargeHeader>
       <ChallengeCard>
         <SlidePrev hide={slidesIndex === 0} onClick={slideToPrev}>
           <ChevronLeft />
@@ -126,39 +103,11 @@ export default function NewChallenge() {
           </IonSlide>
           <IonSlide>
             <SlideContainer>
-              <AmountInputContainer>
-                <AmountInputSection>
-                  <AmountInputLabel>Amount</AmountInputLabel>
-                  <AmountInputWrapper
-                    ref={amountInputRef}
-                    inputMode="decimal"
-                    title="Token Amount"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    type="text"
-                    pattern="^[0-9]*[.,]?[0-9]*$"
-                    placeholder="0.0"
-                    minLength={1}
-                    maxLength={79}
-                    spellCheck={false}
-                    value={amount}
-                    onChange={handleAmountInput}
-                  />
-                </AmountInputSection>
-                <BalanceSection>
-                  <BalanceLabel>Balance:</BalanceLabel>
-                  <BalanceToken>
-                    <img src={EthLogo} alt="ETH" />
-                    <SpaceX />
-                    <p>ETH</p>
-                  </BalanceToken>
-                </BalanceSection>
-              </AmountInputContainer>
-
-              <MarginY />
-              <Button disabled={true} onClick={slideToNext}>
-                Set Your Price
-              </Button>
+              <AmountInput
+                isActive={slidesIndex === 2}
+                amount={amount}
+                setAmount={setAmount}
+              />
             </SlideContainer>
           </IonSlide>
         </IonSlidesWrapper>

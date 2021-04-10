@@ -1,9 +1,7 @@
 import styled from 'styled-components'
-import { Moon, Sun, Activity, Link, Link2 } from 'react-feather'
-import Row, { RowFixed } from '../Row'
+import { Moon, Sun } from 'react-feather'
+import { RowFixed } from '../Row'
 import Logo from '../../assets/images/logo.png'
-import { NavLink } from 'react-router-dom'
-import { darken } from 'polished'
 import { useIsDarkMode } from '../../hooks/User'
 import Menu from '../Menu'
 import { StyledMenuButton } from '../Button'
@@ -109,45 +107,6 @@ const RotateIcon = styled.div`
   }
 `
 
-const HeaderLinks = styled(Row)`
-  justify-content: center;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem 0 1rem 1rem;
-    justify-content: flex-end;
-`};
-`
-
-const activeClassName = 'ACTIVE'
-
-const StyledNavLink = styled(NavLink).attrs({
-  activeClassName,
-})`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 12px;
-  min-height: 30px;
-  min-width: 30px;
-  justify-content: center;
-
-  &.${activeClassName} {
-    border-radius: 12px;
-    font-weight: 600;
-    color: ${({ theme }) => theme.text1};
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
-  }
-`
-
 const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
@@ -173,12 +132,6 @@ const BalanceText = styled(Text)`
   `};
 `
 
-const HideExtraSmall = styled.span`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
-`
-
 const HideSmall = styled.span`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -198,10 +151,6 @@ const NetworkCard = styled(YellowCard)`
   `};
 `
 
-const SpaceX = styled.span`
-  padding: 0 2px;
-`
-
 export default function Header() {
   const { isDarkMode, toggleDarkMode } = useIsDarkMode()
   const { account, chainId } = useActiveWeb3React()
@@ -215,23 +164,6 @@ export default function Header() {
             <img width={'30px'} src={Logo} alt="logo" />
           </RotateIcon>
         </Title>
-        {/* <HeaderLinks>
-          <StyledNavLink id={`home-nav-link`} to={'/home'}>
-            <Activity />
-            <SpaceX />
-            <HideExtraSmall>Tab_1</HideExtraSmall>
-          </StyledNavLink>
-          <StyledNavLink id={`tab2-nav-link`} to={'/tab2'}>
-            <Link2 />
-            <SpaceX />
-            <HideExtraSmall>Tab_2</HideExtraSmall>
-          </StyledNavLink>
-          <StyledNavLink id={`tab3-nav-link`} to={'/tab3'}>
-            <Link />
-            <SpaceX />
-            <HideExtraSmall>Tab_3</HideExtraSmall>
-          </StyledNavLink>
-        </HeaderLinks> */}
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>

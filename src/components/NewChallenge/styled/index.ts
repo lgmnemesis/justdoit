@@ -69,20 +69,28 @@ export const Label = styled.div`
 
 export const AmountInputContainer = styled.div`
   display: flex;
+  flex-direction: column;
   border-radius: 20px;
   border: 1px solid ${({ theme }) => theme.bg2};
   min-height: 60px;
 `
 
 export const AmountInputSection = styled.div`
-  padding: 15px;
-  text-align: start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 5px;
+  padding-bottom: 15px;
 `
 
 export const AmountInputLabel = styled.div`
   padding-bottom: 10px;
   font-size: 16px;
   font-weight: ${({ theme }) => theme.fontSize1};
+  width: 50%;
+  text-align: start;
 `
 
 export const AmountInputWrapper = styled.input`
@@ -91,25 +99,34 @@ export const AmountInputWrapper = styled.input`
   color: ${({ theme }) => theme.text1};
   outline: none;
   border: 0;
-  width: 100%;
+  width: 70%;
+  text-align: start;
 }
 `
 
-export const BalanceSection = styled.div`
-  padding: 15px;
-  text-align: end;
+export const AmountLabelSection = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
+  padding-bottom: 5px;
 `
 
 export const BalanceLabel = styled.div`
   padding-bottom: 10px;
   font-size: 16px;
   font-weight: ${({ theme }) => theme.fontSize1};
+  width: 50%;
+  text-align: end;
 `
 
-export const BalanceToken = styled.div`
+export const TokenDisplay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 30%;
   & img {
     width: 24px;
   }
