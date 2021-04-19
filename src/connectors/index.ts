@@ -14,6 +14,7 @@ export enum ChainId {
   RINKEBY = 4,
   GÖRLI = 5,
   KOVAN = 42,
+  GANACHE = 5777,
 }
 
 export const NETWORK_CHAIN_ID: number = parseInt(
@@ -27,6 +28,7 @@ export const injected = new InjectedConnector({
     ChainId.RINKEBY,
     ChainId.GÖRLI,
     ChainId.KOVAN,
+    ChainId.GANACHE,
   ],
 })
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { IonItem, IonDatetime } from '@ionic/react'
 import 'date-fns'
@@ -26,12 +26,24 @@ export const KeyboardDatePickerWrapper = styled(KeyboardDatePicker)`
   }
 `
 
-export default function DateTimePicker() {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
+export default function DateTimePicker({
+  date,
+  setDate,
+}: {
+  date: Date | null
+  setDate: (date: Date | null) => void
+}) {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    date || new Date(),
+  )
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date)
   }
+
+  useEffect(() => {
+    setDate(selectedDate)
+  }, [selectedDate, date, setDate])
 
   return (
     <>
@@ -41,7 +53,7 @@ export default function DateTimePicker() {
             displayFormat="DD/MM/YYYY"
             placeholder="Select Date"
             value={selectedDate?.toString()}
-            onIonChange={(e) => setSelectedDate(new Date(e.detail.value!))}
+            onIonChange={(e) => handleDateChange(new Date(e.detail.value!))}
             pickerOptions={{ cssClass: 'ion-date-time-picker-ismobile' }}
           ></IonDatetime>
         </IonItemWrapper>

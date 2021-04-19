@@ -28,6 +28,7 @@ export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan',
+  [ChainId.GANACHE]: 'Ganache',
 }
 
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {

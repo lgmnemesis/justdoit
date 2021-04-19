@@ -26,10 +26,12 @@ export default function AmountInput({
   isActive,
   amount,
   setAmount,
+  setAllIsDone,
 }: {
   isActive: boolean
   amount: string
-  setAmount: any
+  setAmount: (setAmount: string) => void
+  setAllIsDone: (setAllIsDone: boolean) => void
 }) {
   const { account } = useActiveWeb3React()
   const { balanceFormatStr } = useAccountETHBalance()
@@ -63,6 +65,8 @@ export default function AmountInput({
   const handleButtonClicked = () => {
     if (!account) {
       toggleWalletModal()
+    } else {
+      setAllIsDone(true)
     }
   }
 

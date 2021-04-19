@@ -11,8 +11,8 @@ export default function GoalInput({
 }: {
   isActive: boolean
   text: string
-  setText: any
-  onClick: any
+  setText: (setText: string) => void
+  onClick: () => void
 }) {
   const ionInputRef: any = useRef(null)
 
