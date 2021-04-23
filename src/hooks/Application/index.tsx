@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { Challenge, SupportChallenge } from '../../constants'
 import { useGlobalState } from '../../state/global'
 
 export function useWalletModalToggle() {
@@ -28,4 +29,46 @@ export function useBlockNumber() {
 
   const blockNumber = state.blockNumber
   return { blockNumber, setBlockNumber }
+}
+
+export function useChallenges() {
+  const { state, setState } = useGlobalState()
+
+  const setChallenges = useCallback(
+    (challenges: Challenge[]) => {
+      const unique: Challenge[] = [
+        ...new Map(challenges.map((c) => [c.id, c])).values(),
+      ]
+      console.log('filterd:', unique)
+      setState((current) => ({
+        ...current,
+        challenges: unique,
+      }))
+    },
+    [setState],
+  )
+
+  const challenges = state.challenges
+  return { challenges, setChallenges }
+}
+
+export function useSupportChallenges() {
+  const { state, setState } = useGlobalState()
+
+  const setSupportChallenges = useCallback(
+    (challenges: SupportChallenge[]) => {
+      const unique: SupportChallenge[] = [
+        ...new Map(challenges.map((c) => [c.id, c])).values(),
+      ]
+      console.log('filterd support:', unique)
+      setState((current) => ({
+        ...current,
+        supportChallenges: unique,
+      }))
+    },
+    [setState],
+  )
+
+  const supportChallenges = state.supportChallenges
+  return { supportChallenges, setSupportChallenges }
 }

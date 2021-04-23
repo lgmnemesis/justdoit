@@ -16,24 +16,87 @@
     "type": "constructor"
   },
   {
+    "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "id",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
-        "name": "",
+        "name": "amountStaked",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "token",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "deadline",
+        "type": "uint256"
+      }
+    ],
+    "name": "ChallengeAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "supporter",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "id",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountStaked",
+        "type": "uint256"
+      }
+    ],
+    "name": "SupportChallenge",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
       }
     ],
     "name": "challenges",
     "outputs": [
       {
-        "internalType": "string",
-        "name": "key",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
+        "internalType": "bytes32",
         "name": "id",
-        "type": "uint256"
+        "type": "bytes32"
       },
       {
         "internalType": "address",
@@ -47,7 +110,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "deadLine",
+        "name": "deadline",
         "type": "uint256"
       },
       {
@@ -79,6 +142,11 @@
         "internalType": "bool",
         "name": "gotFees",
         "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "supporters",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -116,84 +184,32 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
       }
     ],
-    "name": "getChallenge",
+    "name": "supporters",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "key",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amountStaked",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "deadLine",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "supprtersAmountStaked",
-            "type": "uint256"
-          },
-          {
-            "internalType": "enum JustDoIt.Result",
-            "name": "resultFromOwner",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "successes",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "failures",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "canBeRewarded",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "gotFees",
-            "type": "bool"
-          },
-          {
-            "internalType": "address[]",
-            "name": "supporters",
-            "type": "address[]"
-          },
-          {
-            "internalType": "address[]",
-            "name": "referees",
-            "type": "address[]"
-          }
-        ],
-        "internalType": "struct JustDoIt.Challenge",
-        "name": "",
-        "type": "tuple"
+        "internalType": "uint256",
+        "name": "amountStaked",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "gotRewards",
+        "type": "bool"
+      },
+      {
+        "internalType": "enum JustDoIt.Result",
+        "name": "result",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -202,79 +218,12 @@
   },
   {
     "inputs": [],
-    "name": "getChallenges",
+    "name": "totalFeesAmount",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "key",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amountStaked",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "deadLine",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "supprtersAmountStaked",
-            "type": "uint256"
-          },
-          {
-            "internalType": "enum JustDoIt.Result",
-            "name": "resultFromOwner",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "successes",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "failures",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "canBeRewarded",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "gotFees",
-            "type": "bool"
-          },
-          {
-            "internalType": "address[]",
-            "name": "supporters",
-            "type": "address[]"
-          },
-          {
-            "internalType": "address[]",
-            "name": "referees",
-            "type": "address[]"
-          }
-        ],
-        "internalType": "struct JustDoIt.Challenge[]",
+        "internalType": "uint256",
         "name": "",
-        "type": "tuple[]"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -284,29 +233,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_supporter",
-        "type": "address"
-      }
-    ],
-    "name": "getChallengesByAccount",
-    "outputs": [
-      {
-        "internalType": "string[]",
-        "name": "",
-        "type": "string[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       }
     ],
     "name": "getFinalResult",
@@ -324,9 +253,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       }
     ],
     "name": "getFees",
@@ -344,9 +273,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       }
     ],
     "name": "getOwnerRewards",
@@ -369,9 +298,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       }
     ],
     "name": "getSupporterRewards",
@@ -394,13 +323,18 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
+      },
+      {
         "internalType": "string",
-        "name": "_key",
+        "name": "_name",
         "type": "string"
       },
       {
         "internalType": "uint256",
-        "name": "_deadLine",
+        "name": "_deadline",
         "type": "uint256"
       }
     ],
@@ -413,9 +347,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       }
     ],
     "name": "supportChallenge",
@@ -427,9 +361,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       },
       {
         "internalType": "enum JustDoIt.Result",
@@ -445,9 +379,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       },
       {
         "internalType": "enum JustDoIt.Result",
@@ -463,9 +397,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       }
     ],
     "name": "collectOwnerRewards",
@@ -476,9 +410,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       }
     ],
     "name": "collectSupporterRewards",
@@ -489,9 +423,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       }
     ],
     "name": "collectChallengeFees",
@@ -509,9 +443,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       }
     ],
     "name": "isChallengeExists",
@@ -529,9 +463,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       }
     ],
     "name": "isReportTime",

@@ -49,7 +49,7 @@ export default function AmountInput({
 
   const validateAmountInput = (value: string) => {
     const amountFloat = parseFloat(value) || 0
-    const balance = parseFloat(balanceFormatStr) || 0
+    const balance = parseFloat(balanceFormatStr ?? '') || 0
     if (account && amountFloat >= balance) {
       setButtonText(ButtonTextOptions.NotEnoughFunds)
       setButtonDisabled(true)

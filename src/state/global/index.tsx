@@ -6,11 +6,16 @@ import {
   SetStateAction,
   ReactNode,
 } from 'react'
+import { Challenge, SupportChallenge } from '../../constants'
 
 export interface GlobalStateInterface {
   isDarkMode: boolean
   isOpenWalletModal: boolean
   blockNumber: number
+  acountETHBalance: number
+  acountETHBalanceStr: string
+  challenges: Challenge[]
+  supportChallenges: SupportChallenge[]
 }
 
 const GlobalStateContext = createContext({

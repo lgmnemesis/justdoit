@@ -3,6 +3,11 @@ import { IonSlides } from '@ionic/react'
 import { LightCard } from '../../Card'
 import { ButtonPrimary } from '../../Button'
 
+export const NewChallengeContainer = styled.div`
+  text-align: center;
+  padding: 30px;
+`
+
 export const ChallengeCard = styled(LightCard)`
   position: relative;
   max-width: 500px;

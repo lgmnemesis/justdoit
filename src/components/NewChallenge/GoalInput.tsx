@@ -30,7 +30,7 @@ export default function GoalInput({
         <Label>Enter your goal</Label>
         <IonInput
           ref={ionInputRef}
-          maxlength={40}
+          maxlength={30}
           value={text}
           onIonChange={(e) => setText(e.detail.value!)}
         ></IonInput>

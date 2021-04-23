@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import {
   ChainId,
@@ -8,8 +9,40 @@ import {
   walletlink,
 } from '../connectors'
 
+export enum JustDoItEvents {
+  ChallengeAddedEvent = 'ChallengeAdded',
+  SupportChallengeEvent = 'SupportChallenge',
+}
+
+export interface ChallengeAddedEvent {
+  id?: string
+  owner?: string
+  name?: string
+  amountStaked?: BigNumber
+  token?: string
+  deadline?: BigNumber
+}
+
+export interface Challenge extends ChallengeAddedEvent {}
+
+export interface SupportChallengeEvent {
+  supporter?: string
+  id?: string
+  amountStaked?: BigNumber
+}
+
+export interface SupportChallenge extends SupportChallengeEvent {}
+
 export const NetworkContextName = 'NETWORK'
 export const PERSIST_IS_DARK_MODE = 'darkmode'
+
+export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
+  [ChainId.RINKEBY]: 'Rinkeby',
+  [ChainId.ROPSTEN]: 'Ropsten',
+  [ChainId.GÖRLI]: 'Görli',
+  [ChainId.KOVAN]: 'Kovan',
+  [ChainId.GANACHE]: 'Ganache',
+}
 
 export interface WalletInfo {
   connector?: AbstractConnector
@@ -21,14 +54,6 @@ export interface WalletInfo {
   primary?: true
   mobile?: true
   mobileOnly?: true
-}
-
-export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.RINKEBY]: 'Rinkeby',
-  [ChainId.ROPSTEN]: 'Ropsten',
-  [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',
-  [ChainId.GANACHE]: 'Ganache',
 }
 
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
