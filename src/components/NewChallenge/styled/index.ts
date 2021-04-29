@@ -4,8 +4,12 @@ import { LightCard } from '../../Card'
 import { ButtonPrimary } from '../../Button'
 
 export const NewChallengeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 30px;
+  padding: 10px;
 `
 
 export const ChallengeCard = styled(LightCard)`
@@ -13,9 +17,11 @@ export const ChallengeCard = styled(LightCard)`
   max-width: 500px;
   min-height: 400px;
   text-align: center;
-  margin: 10px 0;
   padding-left: 40px;
   padding-right: 40px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    max-width: 350px;
+  `};
 `
 
 export const IonSlidesWrapper = styled(IonSlides)`

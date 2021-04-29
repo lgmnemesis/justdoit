@@ -39,7 +39,6 @@ export function useChallenges() {
       const unique: Challenge[] = [
         ...new Map(challenges.map((c) => [c.id, c])).values(),
       ]
-      console.log('filterd:', unique)
       setState((current) => ({
         ...current,
         challenges: unique,
@@ -60,7 +59,6 @@ export function useSupportChallenges() {
       const unique: SupportChallenge[] = [
         ...new Map(challenges.map((c) => [c.id, c])).values(),
       ]
-      console.log('filterd support:', unique)
       setState((current) => ({
         ...current,
         supportChallenges: unique,

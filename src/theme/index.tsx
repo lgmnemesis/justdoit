@@ -70,6 +70,9 @@ export function colors(darkMode: boolean): Colors {
     secondary2: darkMode ? '#17000b26' : '#F6DDE8',
     secondary3: darkMode ? '#17000b26' : '#FDEAF1',
 
+    // nice colors
+    nice1: darkMode ? '#EAE2FC' : '#452A7A',
+
     // other
     red1: '#FD4040',
     red2: '#F82D3A',
@@ -78,6 +81,8 @@ export function colors(darkMode: boolean): Colors {
     yellow1: '#FFE270',
     yellow2: '#F3841E',
     blue1: '#2172E5',
+    pink1: '#7645D9',
+    light1: '#1FC7D4',
   }
 }
 

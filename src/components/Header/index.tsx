@@ -20,6 +20,7 @@ const HeaderFrame = styled.div`
   align-items: center;
   flex-direction: row;
   width: 100%;
+  height: 70px;
   top: 0;
   position: fixed;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);

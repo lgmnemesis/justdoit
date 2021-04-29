@@ -23,7 +23,11 @@ export interface ChallengeAddedEvent {
   deadline?: BigNumber
 }
 
-export interface Challenge extends ChallengeAddedEvent {}
+export interface Challenge extends ChallengeAddedEvent {
+  supporters?: {
+    [key: string]: SupportChallenge
+  }
+}
 
 export interface SupportChallengeEvent {
   supporter?: string

@@ -16,7 +16,7 @@ export interface Call {
 type MethodArg = string | number | BigNumber
 type MethodArgs = Array<MethodArg | MethodArg[]>
 
-type OptionalMethodInputs =
+export type OptionalMethodInputs =
   | Array<MethodArg | MethodArg[] | undefined>
   | undefined
 
@@ -83,7 +83,6 @@ export function useProviderCallResult(
 
   useEffect(() => {
     callData(contract?.provider, calls[0])?.then((res) => {
-      console.log('in call data')
       setResult(res)
     })
   }, [result, contract, fragment])

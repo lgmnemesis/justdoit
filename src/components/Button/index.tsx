@@ -89,6 +89,33 @@ export const ButtonSecondary = styled(Base)`
   }
 `
 
+export const ButtonLight = styled(Base)`
+  background-color: ${({ theme }) => theme.light1};
+  color: white;
+  &:focus {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.light1)};
+    background-color: ${({ theme }) => darken(0.05, theme.light1)};
+  }
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.light1)};
+  }
+  &:active {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.light1)};
+    background-color: ${({ theme }) => darken(0.1, theme.light1)};
+  }
+  &:disabled {
+    background-color: ${({ theme, altDisabledStyle, disabled }) =>
+      altDisabledStyle ? (disabled ? theme.bg3 : theme.light1) : theme.bg3};
+    color: ${({ theme, altDisabledStyle, disabled }) =>
+      altDisabledStyle ? (disabled ? theme.text3 : 'white') : theme.text3};
+    cursor: auto;
+    box-shadow: none;
+    border: 1px solid transparent;
+    outline: none;
+    opacity: ${({ altDisabledStyle }) => (altDisabledStyle ? '0.5' : '1')};
+  }
+`
+
 export const StyledMenuButton = styled.button`
   position: relative;
   width: 100%;

@@ -40,6 +40,9 @@ export interface Colors {
   secondary2: Color
   secondary3: Color
 
+  // nice
+  nice1: Color
+
   // other
   red1: Color
   red2: Color
@@ -48,6 +51,8 @@ export interface Colors {
   yellow1: Color
   yellow2: Color
   blue1: Color
+  pink1: Color
+  light1: Color
 }
 
 export interface Grids {

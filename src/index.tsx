@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import 'inter-ui'
-import { HashRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import App from './pages/App'
 import { NetworkContextName } from './constants'
 import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core'
@@ -33,9 +33,9 @@ ReactDOM.render(
           <Updaters />
           <ThemeProvider>
             <ThemedGlobalStyle />
-            <HashRouter>
+            <BrowserRouter>
               <App />
-            </HashRouter>
+            </BrowserRouter>
           </ThemeProvider>
         </GlobalStateProvider>
       </Web3ProviderNetwork>

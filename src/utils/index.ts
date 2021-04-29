@@ -1,7 +1,9 @@
+import { formatBytes32String } from '@ethersproject/strings'
 import { getAddress } from '@ethersproject/address'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
+import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId } from '../connectors'
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
@@ -89,4 +91,40 @@ export function getContract(
     ABI,
     getProviderOrSigner(library, account) as any,
   )
+}
+
+const random32String = (): string => {
+  // use for challenge ID.
+  // formatBytes32String:  Strings must be 31 bytes or shorter, or an exception is thrown.
+  return Array.from(Array(31), () =>
+    Math.floor(Math.random() * 36).toString(36),
+  ).join('')
+}
+
+export const generateChallengeId = (): string => {
+  return formatBytes32String(random32String())
+}
+
+// add 10%
+export function calculateGasMargin(value: BigNumber): BigNumber {
+  return value
+    .mul(BigNumber.from(10000).add(BigNumber.from(1000)))
+    .div(BigNumber.from(10000))
+}
+
+export function handleTxErrors(error: any): string | null {
+  const DEFAULT_ERROR =
+    'Challenge was not added. Please make sure you are connected correctly and try again'
+  if (error) {
+    const code = error.code
+    const message: string = error?.data?.message
+    if (code === 4001) {
+      return 'You rejected the transaction. Please try again.'
+    }
+    if (message?.match('Deadline too short')) {
+      return 'You set the deadline too soon. Please fix it and try again'
+    }
+    return DEFAULT_ERROR
+  }
+  return null
 }

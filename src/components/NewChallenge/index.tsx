@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { IonSlide } from '@ionic/react'
 import { ChevronLeft } from 'react-feather'
-import { formatBytes32String } from '@ethersproject/strings'
 import DateTimePicker from '../DateTimePicker'
 import { TYPE } from '../../theme'
 import GoalInput from './GoalInput'
@@ -17,8 +16,8 @@ import {
 } from './styled'
 import { useActiveWeb3React } from '../../hooks'
 import { useJustDoItContract } from '../../hooks/contracts/useContract'
-import { ethers } from 'ethers'
-import { useChallenges } from '../../hooks/Application'
+import { useJustDoItContractService } from '../../services/JustDoItContractService'
+import { generateChallengeId, handleTxErrors } from '../../utils'
 
 const slideOpts = {
   initialSlide: 0,
@@ -34,21 +33,28 @@ enum TITLE {
 }
 let firstNextIndication = false
 
+const defaultDeadline = () => {
+  return new Date()
+}
+
 export default function NewChallenge() {
-  const { account, library } = useActiveWeb3React()
+  const { library } = useActiveWeb3React()
   const slidesRef: any = useRef(null)
   const [slidesIndex, setSlidesIndex] = useState(0)
-  const [goalText, setgoalText] = useState('')
-  const [deadLine, setDeadLine] = useState<Date | null>(new Date())
+  const [goalText, setGoalText] = useState('')
+  const [deadLine, setDeadLine] = useState<Date | null>(defaultDeadline())
   const [amount, setAmount] = useState('')
+  const [isFetching, setIsFetching] = useState(false)
+  const [error, setError] = useState('')
   const justDoItContract = useJustDoItContract()
-  const { challenges, setChallenges } = useChallenges()
+  const { addChallenge } = useJustDoItContractService()
 
   const setSlidesDefaults = async () => {
     handleSlidesIndex()
   }
 
   const handleSlidesIndex = async () => {
+    setError('')
     const index = await slidesRef.current.getActiveIndex()
     setSlidesIndex(index)
   }
@@ -67,32 +73,37 @@ export default function NewChallenge() {
   const handleAllIsDone = (isDone: boolean) => {
     if (isDone) {
       // Create a new challenge in contract
+      setIsFetching(true)
+      setError('')
+      setTimeout(async () => {
+        const tx = await addChallenge(
+          generateChallengeId(),
+          goalText,
+          deadLine,
+          amount,
+        )
+        const error = handleTxErrors(tx?.error)
+        error && setError(error)
+        !error && challengeWasAdded()
+        setIsFetching(false)
+      }, 0)
     }
   }
 
-  const random32String = (): string => {
-    // use for challenge ID.
-    // formatBytes32String:  Strings must be 31 bytes or shorter, or an exception is thrown.
-    return Array.from(Array(31), () =>
-      Math.floor(Math.random() * 36).toString(36),
-    ).join('')
+  const challengeWasAdded = async () => {
+    setSlidesIndex(0)
+    setGoalText('')
+    setDeadLine(defaultDeadline())
+    setAmount('')
+    setIsFetching(false)
+    await slidesRef.current.slideTo(0, 0)
+    setSlidesDefaults()
   }
 
-  // console.log(
-  //   'moshe text:',
-  //   goalText,
-  //   goalText.length,
-  //   random32String(),
-  //   random32String().length,
-  // )
   const methodName = 'challenges'
-
   const challengeID =
     '0x646a64766a356e766d6670633378787876657265616267723078676b33317000' // formatBytes32String(random32String())
-  // console.log('moshe:', challengeID.length)
-
   const inputs: any[] = [challengeID]
-
   const fragment = useMemo(
     () => justDoItContract?.interface?.getFunction(methodName),
     [justDoItContract, methodName],
@@ -110,9 +121,11 @@ export default function NewChallenge() {
         ]
       : []
   }, [justDoItContract, fragment, inputs])
-
   const testing = async () => {
     try {
+      console.log('address:', justDoItContract?.address)
+      const code = await library?.getCode(justDoItContract?.address ?? '')
+      console.log('code:', code)
       const dateFromBlock = (await library?.getBlock(library.blockNumber))
         ?.timestamp // Math.round(new Date().getTime() / 1000) + 60 * 60 * 25
       const date = dateFromBlock ? dateFromBlock + 60 * 60 * 25 : 0
@@ -175,7 +188,7 @@ export default function NewChallenge() {
 
   return (
     <NewChallengeContainer>
-      <TYPE.LargeHeader padding="3rem 10px" letterSpacing="3px">
+      <TYPE.LargeHeader padding="20px 10px" letterSpacing="3px">
         {title}
       </TYPE.LargeHeader>
       <ChallengeCard>
@@ -183,6 +196,7 @@ export default function NewChallenge() {
           <ChevronLeft />
         </SlidePrev>
 
+        <TYPE.Error error={!!error}>{error}</TYPE.Error>
         <IonSlidesWrapper
           ref={slidesRef}
           pager={true}
@@ -194,7 +208,7 @@ export default function NewChallenge() {
               <GoalInput
                 isActive={slidesIndex === 0}
                 text={goalText}
-                setText={setgoalText}
+                setText={setGoalText}
                 onClick={slideToNext}
               />
             </SlideContainer>
@@ -211,6 +225,7 @@ export default function NewChallenge() {
               <AmountInput
                 isActive={slidesIndex === 2}
                 amount={amount}
+                showSpinner={isFetching}
                 setAmount={setAmount}
                 setAllIsDone={handleAllIsDone}
               />

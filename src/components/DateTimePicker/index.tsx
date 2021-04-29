@@ -10,6 +10,11 @@ import {
 } from '@material-ui/pickers'
 
 import styled from 'styled-components'
+
+export const GridWrapper = styled(Grid)`
+  height: 100px;
+`
+
 export const IonItemWrapper = styled(IonItem)`
   --color: ${({ theme }) => theme.text1};
   display: grid;
@@ -59,7 +64,7 @@ export default function DateTimePicker({
         </IonItemWrapper>
       ) : (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <Grid container justify="space-around">
+          <GridWrapper container justify="space-around">
             <KeyboardDatePickerWrapper
               disableToolbar
               variant="inline"
@@ -73,7 +78,7 @@ export default function DateTimePicker({
                 'aria-label': 'change date',
               }}
             />
-          </Grid>
+          </GridWrapper>
         </MuiPickersUtilsProvider>
       )}
     </>

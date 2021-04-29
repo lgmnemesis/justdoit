@@ -31,6 +31,7 @@ export default function GoalInput({
         <IonInput
           ref={ionInputRef}
           maxlength={30}
+          placeholder={'E.g. Finish a 5k'}
           value={text}
           onIonChange={(e) => setText(e.detail.value!)}
         ></IonInput>

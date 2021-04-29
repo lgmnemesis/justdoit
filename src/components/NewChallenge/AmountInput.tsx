@@ -25,11 +25,13 @@ enum ButtonTextOptions {
 export default function AmountInput({
   isActive,
   amount,
+  showSpinner,
   setAmount,
   setAllIsDone,
 }: {
   isActive: boolean
   amount: string
+  showSpinner: boolean
   setAmount: (setAmount: string) => void
   setAllIsDone: (setAllIsDone: boolean) => void
 }) {
@@ -118,9 +120,13 @@ export default function AmountInput({
       </AmountInputContainer>
 
       <MarginY />
-      <Button disabled={buttonDisabled} onClick={handleButtonClicked}>
-        {buttonText}
-      </Button>
+      {showSpinner ? (
+        <p>spinner</p>
+      ) : (
+        <Button disabled={buttonDisabled} onClick={handleButtonClicked}>
+          {buttonText}
+        </Button>
+      )}
     </>
   )
 }

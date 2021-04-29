@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import Header from '../components/Header'
 import Web3ReactManager from '../components/Web3ReactManager'
 import HomePage from './Home'
+import HowItWorksPage from './HowItWorks'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -19,12 +20,8 @@ const HeaderWrapper = styled.div`
 `
 
 const BodyWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
   width: 100%;
-  padding-top: 100px;
-  align-items: center;
-  flex: 1;
+  margin-top: 70px;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 1;
@@ -44,8 +41,12 @@ export default function App() {
         <BodyWrapper>
           <Web3ReactManager>
             <Switch>
-              <Route exact strict path="/home" component={HomePage} />
-              <Redirect to="/home" />
+              <Route exact path="/" component={HomePage} />
+              <Route exact path="/home" component={HomePage} />
+              <Route exact path="/howitworks" component={HowItWorksPage} />
+              <Route path="/">
+                <Redirect to="/" />
+              </Route>
             </Switch>
           </Web3ReactManager>
           <Marginer />
