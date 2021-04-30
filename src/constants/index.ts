@@ -37,6 +37,30 @@ export interface SupportChallengeEvent {
 
 export interface SupportChallenge extends SupportChallengeEvent {}
 
+export enum ChallengeActionType {
+  ADD_CHALLENGE,
+  SUPPORT_CHALLEGE,
+  VOTE_ON_CHALLENGE,
+  CONFIRM_ADD_CHALLENGE,
+  CONFIRM_SUPPORT_CHALLENGE,
+  CONFIRM_VOTE_ON_CHALLENGE,
+}
+
+export interface InformationBarAction {
+  id: string
+  type: ChallengeActionType
+}
+
+export interface InformationBar {
+  message: string
+  isOpen: boolean
+  action?: InformationBarAction
+  isSpinning?: boolean
+  canClose?: boolean
+  isSuccessColor?: boolean
+  closeOnTimeout?: number
+}
+
 export const NetworkContextName = 'NETWORK'
 export const PERSIST_IS_DARK_MODE = 'darkmode'
 

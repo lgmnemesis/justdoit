@@ -1,5 +1,4 @@
 import { ethers } from 'ethers'
-import { useProviderCallResult, OptionalMethodInputs } from '../hooks/contracts'
 import { useJustDoItContract } from '../hooks/contracts/useContract'
 import { calculateGasMargin } from '../utils'
 

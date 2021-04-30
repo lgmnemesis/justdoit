@@ -15,6 +15,7 @@ import EthLogo from '../../assets/images/ethereum-logo.png'
 import { useActiveWeb3React } from '../../hooks'
 import { useAccountETHBalance } from '../../state/wallet'
 import { useWalletModalToggle } from '../../hooks/Application'
+import Loader from '../Loader'
 
 enum ButtonTextOptions {
   EnterAmount = 'Set Your Price',
@@ -120,13 +121,12 @@ export default function AmountInput({
       </AmountInputContainer>
 
       <MarginY />
-      {showSpinner ? (
-        <p>spinner</p>
-      ) : (
-        <Button disabled={buttonDisabled} onClick={handleButtonClicked}>
-          {buttonText}
-        </Button>
-      )}
+      <Button
+        disabled={buttonDisabled || showSpinner}
+        onClick={handleButtonClicked}
+      >
+        {showSpinner ? <Loader /> : buttonText}
+      </Button>
     </>
   )
 }

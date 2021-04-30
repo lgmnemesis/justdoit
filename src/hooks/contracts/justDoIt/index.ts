@@ -1,13 +1,16 @@
 import { useProviderCallResult, OptionalMethodInputs } from '..'
 import { useJustDoItContract } from '../useContract'
 
-const useGetOwnerResult = (challengeId: OptionalMethodInputs) => {
+const useGetFromContract = (
+  methodName: string,
+  options: OptionalMethodInputs,
+) => {
   const justDoItContract = useJustDoItContract()
-  const res = useProviderCallResult(
-    justDoItContract,
-    'getOwnerResult',
-    challengeId,
-  )
+  return useProviderCallResult(justDoItContract, methodName, options)
+}
+
+export const useGetOwnerResult = (challengeId: string | undefined) => {
+  const res = useGetFromContract('getOwnerResult', [challengeId])
   console.log('moshe: getOwnerResult:', res)
   return res
 }

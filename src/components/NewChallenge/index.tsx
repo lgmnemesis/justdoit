@@ -18,6 +18,8 @@ import { useActiveWeb3React } from '../../hooks'
 import { useJustDoItContract } from '../../hooks/contracts/useContract'
 import { useJustDoItContractService } from '../../services/JustDoItContractService'
 import { generateChallengeId, handleTxErrors } from '../../utils'
+import { useInformationBar } from '../../hooks/User'
+import { Challenge, ChallengeActionType } from '../../constants'
 
 const slideOpts = {
   initialSlide: 0,
@@ -34,7 +36,8 @@ enum TITLE {
 let firstNextIndication = false
 
 const defaultDeadline = () => {
-  return new Date()
+  const date = new Date()
+  return new Date(date.setDate(date.getDate() + 2)) // 2 days from today
 }
 
 export default function NewChallenge() {
@@ -43,9 +46,11 @@ export default function NewChallenge() {
   const [slidesIndex, setSlidesIndex] = useState(0)
   const [goalText, setGoalText] = useState('')
   const [deadLine, setDeadLine] = useState<Date | null>(defaultDeadline())
+  const [minDate, setMinDate] = useState<Date | null>(null)
   const [amount, setAmount] = useState('')
   const [isFetching, setIsFetching] = useState(false)
   const [error, setError] = useState('')
+  const { dispatchInformationBar } = useInformationBar()
   const justDoItContract = useJustDoItContract()
   const { addChallenge } = useJustDoItContractService()
 
@@ -76,21 +81,18 @@ export default function NewChallenge() {
       setIsFetching(true)
       setError('')
       setTimeout(async () => {
-        const tx = await addChallenge(
-          generateChallengeId(),
-          goalText,
-          deadLine,
-          amount,
-        )
+        const challengeId = generateChallengeId()
+        const tx = await addChallenge(challengeId, goalText, deadLine, amount)
         const error = handleTxErrors(tx?.error)
         error && setError(error)
-        !error && challengeWasAdded()
+        !error && challengeWasAdded(challengeId)
         setIsFetching(false)
       }, 0)
     }
   }
 
-  const challengeWasAdded = async () => {
+  const challengeWasAdded = async (challengeId: string) => {
+    dispatchInformationBar(challengeId, ChallengeActionType.ADD_CHALLENGE)
     setSlidesIndex(0)
     setGoalText('')
     setDeadLine(defaultDeadline())
@@ -123,9 +125,9 @@ export default function NewChallenge() {
   }, [justDoItContract, fragment, inputs])
   const testing = async () => {
     try {
-      console.log('address:', justDoItContract?.address)
-      const code = await library?.getCode(justDoItContract?.address ?? '')
-      console.log('code:', code)
+      // console.log('address:', justDoItContract?.address)
+      // const code = await library?.getCode(justDoItContract?.address ?? '')
+      // console.log('code:', code)
       const dateFromBlock = (await library?.getBlock(library.blockNumber))
         ?.timestamp // Math.round(new Date().getTime() / 1000) + 60 * 60 * 25
       const date = dateFromBlock ? dateFromBlock + 60 * 60 * 25 : 0
@@ -174,6 +176,7 @@ export default function NewChallenge() {
   }, [])
 
   useEffect(() => {
+    setMinDate(defaultDeadline())
     setSlidesDefaults()
   }, [])
 
@@ -215,7 +218,11 @@ export default function NewChallenge() {
           </IonSlide>
           <IonSlide>
             <SlideContainer>
-              <DateTimePicker date={deadLine} setDate={setDeadLine} />
+              <DateTimePicker
+                date={deadLine}
+                setDate={setDeadLine}
+                minDate={minDate}
+              />
               <MarginY />
               <Button onClick={slideToNext}>Set Deadline</Button>
             </SlideContainer>

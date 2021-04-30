@@ -6,7 +6,6 @@ import { useActiveWeb3React } from '../../hooks'
 import { useChallenges } from '../../hooks/Application'
 import { useSupportChallenges } from '../../hooks/Application'
 import { TYPE } from '../../theme'
-import { useJustDoItContractService } from '../../services/JustDoItContractService'
 
 export const GridContainer = styled.div`
   display: grid;
@@ -15,6 +14,7 @@ export const GridContainer = styled.div`
   padding: 10px;
   align-content: center;
   justify-content: center;
+  align-items: start;
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
   grid-template-columns: repeat(auto-fit, 100%);
 `};
@@ -89,7 +89,7 @@ export default function ChallengesToSupport() {
         </Container>
       )
     },
-    [],
+    [account],
   )
 
   return (

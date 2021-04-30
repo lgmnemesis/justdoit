@@ -34,21 +34,15 @@ export const KeyboardDatePickerWrapper = styled(KeyboardDatePicker)`
 export default function DateTimePicker({
   date,
   setDate,
+  minDate,
 }: {
   date: Date | null
   setDate: (date: Date | null) => void
+  minDate: Date | null
 }) {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(
-    date || new Date(),
-  )
-
   const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date)
+    setDate(date)
   }
-
-  useEffect(() => {
-    setDate(selectedDate)
-  }, [selectedDate, date, setDate])
 
   return (
     <>
@@ -57,7 +51,7 @@ export default function DateTimePicker({
           <IonDatetime
             displayFormat="DD/MM/YYYY"
             placeholder="Select Date"
-            value={selectedDate?.toString()}
+            value={date?.toString()}
             onIonChange={(e) => handleDateChange(new Date(e.detail.value!))}
             pickerOptions={{ cssClass: 'ion-date-time-picker-ismobile' }}
           ></IonDatetime>
@@ -71,8 +65,8 @@ export default function DateTimePicker({
               format="dd/MM/yyyy"
               margin="normal"
               label="Select Date"
-              value={selectedDate}
-              minDate={new Date()}
+              value={date}
+              minDate={minDate}
               onChange={handleDateChange}
               KeyboardButtonProps={{
                 'aria-label': 'change date',

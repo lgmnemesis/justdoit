@@ -238,6 +238,26 @@
         "type": "bytes32"
       }
     ],
+    "name": "getOwnerResult",
+    "outputs": [
+      {
+        "internalType": "enum JustDoIt.Result",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
+      }
+    ],
     "name": "getFinalResult",
     "outputs": [
       {
@@ -446,26 +466,11 @@
         "internalType": "bytes32",
         "name": "_id",
         "type": "bytes32"
-      }
-    ],
-    "name": "isChallengeExists",
-    "outputs": [
+      },
       {
         "internalType": "bool",
-        "name": "",
+        "name": "isOwner",
         "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_id",
-        "type": "bytes32"
       }
     ],
     "name": "isReportTime",

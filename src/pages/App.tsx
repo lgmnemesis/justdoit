@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import Header from '../components/Header'
+import InformationBar from '../components/InformationBar'
 import Web3ReactManager from '../components/Web3ReactManager'
 import HomePage from './Home'
 import HowItWorksPage from './HowItWorks'
@@ -35,6 +36,7 @@ export default function App() {
   return (
     <Suspense fallback={null}>
       <AppWrapper>
+        <InformationBar />
         <HeaderWrapper>
           <Header />
         </HeaderWrapper>
