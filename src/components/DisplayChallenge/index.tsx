@@ -19,17 +19,17 @@ import {
   ChallengeButtonContainer,
 } from './styles'
 import ChallengeDetails from './ChallengeDetails'
+import SupportChallenge from '../SupportChallenge'
 
 export default function DisplayChallenge({
   challenge,
   account,
-  onClick,
 }: {
   challenge: Challenge
   account: string | undefined | null
-  onClick: any
 }) {
   const [details, setDetails] = useState(false)
+  const [isOpenModal, setIsOpenModal] = useState(false)
   const timestamp = (challenge.deadline?.toNumber() || 1) * 1000
   const deadline = useMemo(() => new Date(timestamp).toDateString(), [
     timestamp,
@@ -51,6 +51,10 @@ export default function DisplayChallenge({
     setDetails((d) => !d)
   }
 
+  const handleClick = () => {
+    setIsOpenModal(true)
+  }
+
   return (
     <>
       <ChallengeContainer>
@@ -61,25 +65,25 @@ export default function DisplayChallenge({
           <Spacing />
           <ChallengeButtonContainer>
             {challenge.owner !== account && (
-              <ChallengeButton disabled={false} onClick={onClick}>
+              <ChallengeButton disabled={false} onClick={handleClick}>
                 {isSupporting ? 'Cast Your Vote' : 'Support Challenge'}
               </ChallengeButton>
             )}
           </ChallengeButtonContainer>
           <Spacing />
           <ChallengeLine>
-            <LightColor>Deadline </LightColor>
+            <LightColor>Deadline</LightColor>
             {deadline}
           </ChallengeLine>
           <ChallengeLine>
-            <LightColor>Challenge Stake: </LightColor>
+            <LightColor>Challenge Stake</LightColor>
             <ChallengeEndLine>
               <PinkColor>{amount}</PinkColor>
             </ChallengeEndLine>
           </ChallengeLine>
           {isSupporting && (
             <ChallengeLine>
-              <LightColor>Your Stake: </LightColor>
+              <LightColor>Your Stake</LightColor>
               <ChallengeEndLine>
                 <PinkColor>{supportedAmount}</PinkColor>
               </ChallengeEndLine>
@@ -98,6 +102,11 @@ export default function DisplayChallenge({
           {details ? <ChallengeDetails challenge={challenge} /> : null}
         </ChallengeCard>
       </ChallengeContainer>
+      <SupportChallenge
+        challenge={challenge}
+        isOpenModal={isOpenModal}
+        setIsOpenModal={setIsOpenModal}
+      />
     </>
   )
 }

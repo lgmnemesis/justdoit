@@ -170,6 +170,10 @@ body {
   min-height: 100vh;
 }
 
+.ion-modal-fixed {
+  position: fixed;
+}
+
 .basic-popover .popover-content {
   background: ${({ theme }) => theme.bg3};
   border-radius: 10px;

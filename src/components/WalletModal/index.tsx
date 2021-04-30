@@ -51,8 +51,14 @@ const CloseColor = styled(X)`
 `
 
 const ModalWrapper = styled(IonModal)`
+  .modal-shadow {
+    width: unset;
+    height: unset;
+  }
   .modal-wrapper {
     --background: ${({ theme }) => theme.bg2};
+    width: unset;
+    height: unset;
   }
 `
 
@@ -349,6 +355,7 @@ const WalletModalInternal = () => {
 
   return (
     <ModalWrapper
+      cssClass="ion-modal-fixed"
       mode="ios"
       swipeToClose={true}
       isOpen={isOpenWalletModal === undefined ? false : isOpenWalletModal}

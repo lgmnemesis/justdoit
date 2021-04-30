@@ -1,6 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { formatEther } from '@ethersproject/units'
 import { Challenge } from '../../constants'
-import { useGetOwnerResult } from '../../hooks/contracts/justDoIt'
+import {
+  useGetChallenge,
+  useGetOwnerResult,
+} from '../../hooks/contracts/justDoIt'
 import {
   ChallengeLine,
   ChallengeEndLine,
@@ -25,8 +29,22 @@ export default function ChallengeDetails({
   challenge: Challenge
 }) {
   const ownerResult = useGetOwnerResult(challenge.id)
+  const challengeOnChain = useGetChallenge(challenge.id)
   const [timeLeftText, setTimeLeftText] = useState('')
   const [countdown, setcountdown] = useState(false)
+
+  const supporters = useMemo(
+    () =>
+      challengeOnChain?.supporters && challengeOnChain.supporters.toNumber(),
+    [challengeOnChain?.supporters],
+  )
+
+  const supprtersAmountStaked = useMemo(
+    () =>
+      challengeOnChain?.supprtersAmountStaked &&
+      formatEther(challengeOnChain.supprtersAmountStaked ?? 0),
+    [challengeOnChain?.supprtersAmountStaked],
+  )
 
   const displayTimeLeft = useCallback((timestamp: number) => {
     const nowInSeconds = new Date().getTime() / 1000
@@ -51,7 +69,6 @@ export default function ChallengeDetails({
       displayTimeLeft(challenge.deadline?.toNumber())
     let interval: NodeJS.Timeout
     if (countdown) {
-      console.log('moshe 5 ##################################')
       interval = setInterval(() => {
         challenge.deadline && displayTimeLeft(challenge.deadline?.toNumber())
       }, 1000)
@@ -63,6 +80,22 @@ export default function ChallengeDetails({
 
   return (
     <>
+      <ChallengeLine>
+        <LightColor>Supporters</LightColor>
+        <ChallengeEndLine>
+          <PinkColor>{supporters}</PinkColor>
+        </ChallengeEndLine>
+      </ChallengeLine>
+
+      {supprtersAmountStaked && supprtersAmountStaked !== '0.0' && (
+        <ChallengeLine>
+          <LightColor>Supporters Stake</LightColor>
+          <ChallengeEndLine>
+            <PinkColor>{supprtersAmountStaked}</PinkColor>
+          </ChallengeEndLine>
+        </ChallengeLine>
+      )}
+
       <ChallengeLine>
         <LightColor>Challenge ends in</LightColor>
         <ChallengeEndLine>

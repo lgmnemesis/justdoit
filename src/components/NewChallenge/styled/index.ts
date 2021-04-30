@@ -110,6 +110,7 @@ export const AmountInputWrapper = styled.input`
   color: ${({ theme }) => theme.text1};
   outline: none;
   border: 0;
+  border-radius: 5px;
   width: 70%;
   text-align: start;
 }

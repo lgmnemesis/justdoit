@@ -44,6 +44,8 @@ export const ChallengeButtonContainer = styled.div`
 
 export const ChallengeButton = styled(ButtonLight)`
   width: initial;
+  padding: 8px 16px;
+  border-radius: 10px;
 `
 
 export const Spacing = styled.div`

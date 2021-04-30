@@ -39,5 +39,24 @@ export function useJustDoItContractService() {
     }
   }
 
-  return { addChallenge }
+  const supportChallenge = async (challengeId: string, amount: string) => {
+    try {
+      if (!justDoItContract) return null
+      const estimatedGas = await justDoItContract.estimateGas.supportChallenge(
+        challengeId,
+        {
+          value: ethers.utils.parseEther(amount),
+        },
+      )
+      const tx = await justDoItContract?.supportChallenge(challengeId, {
+        value: ethers.utils.parseEther(amount),
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
+      return { tx: tx, error: null }
+    } catch (error) {
+      return { tx: null, error: error }
+    }
+  }
+
+  return { addChallenge, supportChallenge }
 }

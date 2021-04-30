@@ -29,6 +29,26 @@ export interface Challenge extends ChallengeAddedEvent {
   }
 }
 
+export enum ChallengeResult {
+  Initial,
+  Success,
+  Failure,
+}
+
+export interface ChallengeOnChain {
+  amountStaked: BigNumber
+  canBeRewarded: boolean
+  deadline: BigNumber
+  failures: BigNumber
+  gotFees: boolean
+  id: string
+  owner: string
+  resultFromOwner: ChallengeResult
+  successes: BigNumber
+  supporters: BigNumber
+  supprtersAmountStaked: BigNumber
+}
+
 export interface SupportChallengeEvent {
   supporter?: string
   id?: string

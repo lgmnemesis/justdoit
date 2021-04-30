@@ -65,8 +65,6 @@ export default function ChallengesToSupport() {
     })
   }, [challenges, supportedChallenges, account])
 
-  const handleClick = (challenge: any) => {}
-
   const renderSection = useCallback(
     (challenges: Challenge[], title: string) => {
       return (
@@ -81,7 +79,6 @@ export default function ChallengesToSupport() {
                   key={challenge.id}
                   challenge={challenge}
                   account={account}
-                  onClick={handleClick(challenge)}
                 />
               ) : null
             })}
