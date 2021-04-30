@@ -1,6 +1,7 @@
+import { Dispatch, SetStateAction, useState } from 'react'
 import styled from 'styled-components'
 import { IonModal } from '@ionic/react'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { X } from 'react-feather'
 import { Challenge, ChallengeActionType } from '../../constants'
 import AmountInput from '../NewChallenge/AmountInput'
 import { TYPE } from '../../theme'
@@ -21,6 +22,40 @@ const ModalWrapper = styled(IonModal)`
   }
 `
 
+const ModalHeader = styled.div`
+  ${({ theme }) => theme.flexColumnNoWrap}
+  margin: 0;
+  padding: 0;
+  width: 100%;
+`
+
+const CloseIcon = styled.div`
+  position: absolute;
+  right: 1rem;
+  top: 14px;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+`
+
+const CloseColor = styled(X)`
+  path {
+    stroke: ${({ theme }) => theme.text4};
+  }
+`
+
+const HeaderRow = styled.div`
+  ${({ theme }) => theme.flexRowNoWrap};
+  padding: 1rem 1rem;
+  font-weight: 500;
+  color: ${(props) =>
+    props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit'};
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    padding: 1rem;
+  `};
+`
+
 const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -30,7 +65,8 @@ const BodyWrapper = styled.div`
 `
 
 const BodyInner = styled.div`
-  padding: 20px;
+  padding: 0 20px;
+  padding-bottom: 20px;
 `
 
 export default function SupportChallenge({
@@ -84,9 +120,16 @@ export default function SupportChallenge({
       isOpen={isOpenModal}
       onDidDismiss={closeModal}
     >
+      <ModalHeader>
+        <CloseIcon onClick={closeModal}>
+          <CloseColor />
+        </CloseIcon>
+        <HeaderRow>Support Challenge</HeaderRow>
+      </ModalHeader>
+
       <BodyWrapper>
         <BodyInner>
-          <p>moshe {challenge.name}</p>
+          <TYPE.Main>{challenge.name}</TYPE.Main>
           <TYPE.Error error={!!error}>{error}</TYPE.Error>
           <AmountInput
             isActive={true}
