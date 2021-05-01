@@ -12,6 +12,8 @@ import {
 export enum JustDoItEvents {
   ChallengeAddedEvent = 'ChallengeAdded',
   SupportChallengeEvent = 'SupportChallenge',
+  OwnerReportResultEvent = 'OwnerReportResult',
+  SupporterReportResultEvent = 'SupporterReportResult',
 }
 
 export interface ChallengeAddedEvent {
@@ -27,6 +29,7 @@ export interface Challenge extends ChallengeAddedEvent {
   supporters?: {
     [key: string]: SupportChallenge
   }
+  ownerResult?: OwnerReportResult
 }
 
 export enum ChallengeResult {
@@ -55,15 +58,31 @@ export interface SupportChallengeEvent {
   amountStaked?: BigNumber
 }
 
+export interface OwnerReportResultEvent {
+  id?: string
+  owner?: string
+  result?: ChallengeResult
+}
+
+export interface SupporterReportResultEvent {
+  id?: string
+  supporter?: string
+  result?: ChallengeResult
+}
+
 export interface SupportChallenge extends SupportChallengeEvent {}
+export interface OwnerReportResult extends OwnerReportResultEvent {}
+export interface SupporterReportResult extends SupporterReportResultEvent {}
 
 export enum ChallengeActionType {
   ADD_CHALLENGE,
   SUPPORT_CHALLEGE,
   VOTE_ON_CHALLENGE,
+  OWNER_REPORT_CHALLENGE,
   CONFIRM_ADD_CHALLENGE,
   CONFIRM_SUPPORT_CHALLENGE,
   CONFIRM_VOTE_ON_CHALLENGE,
+  CONFIRM_OWNER_REPORT_CHALLENGE,
 }
 
 export interface InformationBarAction {

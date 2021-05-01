@@ -3,8 +3,11 @@ import styled from 'styled-components'
 import DisplayChallenge from '../../components/DisplayChallenge'
 import { Challenge } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
-import { useChallenges } from '../../hooks/Application'
-import { useSupportChallenges } from '../../hooks/Application'
+import {
+  useChallenges,
+  useSupportChallenges,
+  useOwnerReportResults,
+} from '../../hooks/Application'
 import { TYPE } from '../../theme'
 
 export const GridContainer = styled.div`
@@ -30,8 +33,9 @@ const Spacing = styled.div`
 
 export default function ChallengesToSupport() {
   const { account } = useActiveWeb3React()
-  const { supportChallenges } = useSupportChallenges()
   const { challenges } = useChallenges()
+  const { supportChallenges } = useSupportChallenges()
+  const { ownerReportResults } = useOwnerReportResults()
 
   const allChallenges: Challenge[] | undefined = useMemo(() => {
     return challenges?.map((c) => {
@@ -45,9 +49,15 @@ export default function ChallengesToSupport() {
           }
         })
       }
+
+      const ownerResult = ownerReportResults?.find((o) => o.id === c.id)
+      if (ownerResult) {
+        if (!cc.ownerResult) cc.ownerResult = {}
+        cc.ownerResult = { ...ownerResult }
+      }
       return { ...cc }
     })
-  }, [challenges, supportChallenges, account])
+  }, [challenges, supportChallenges, ownerReportResults])
 
   const ongoingChallenges: Challenge[] | undefined = useMemo(() => {
     return allChallenges?.filter((c) => {

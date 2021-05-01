@@ -113,3 +113,20 @@ export function useInformationBar() {
   const informationBar = state.informationBar
   return { informationBar, dispatchInformationBar, setInformationBar }
 }
+
+export function useTimeInSecondsTicker() {
+  const { state, setState } = useGlobalState()
+
+  const setTimeInSeconds = useCallback(
+    (timestamp: number) => {
+      setState((current) => ({
+        ...current,
+        timeInSeconds: timestamp,
+      }))
+    },
+    [setState],
+  )
+
+  const timeInSeconds = state.timeInSeconds
+  return { timeInSeconds, setTimeInSeconds }
+}

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { IonSlide } from '@ionic/react'
 import { ChevronLeft } from 'react-feather'
 import DateTimePicker from '../DateTimePicker'
@@ -14,12 +14,10 @@ import {
   MarginY,
   Button,
 } from './styled'
-import { useActiveWeb3React } from '../../hooks'
-import { useJustDoItContract } from '../../hooks/contracts/useContract'
 import { useJustDoItContractService } from '../../services/JustDoItContractService'
 import { generateChallengeId, handleTxErrors } from '../../utils'
 import { useInformationBar } from '../../hooks/User'
-import { Challenge, ChallengeActionType } from '../../constants'
+import { ChallengeActionType } from '../../constants'
 
 const slideOpts = {
   initialSlide: 0,
@@ -41,7 +39,6 @@ const defaultDeadline = () => {
 }
 
 export default function NewChallenge() {
-  const { library } = useActiveWeb3React()
   const slidesRef: any = useRef(null)
   const [slidesIndex, setSlidesIndex] = useState(0)
   const [goalText, setGoalText] = useState('')
@@ -51,12 +48,11 @@ export default function NewChallenge() {
   const [isFetching, setIsFetching] = useState(false)
   const [error, setError] = useState('')
   const { dispatchInformationBar } = useInformationBar()
-  const justDoItContract = useJustDoItContract()
   const { addChallenge } = useJustDoItContractService()
 
-  const setSlidesDefaults = async () => {
+  const setSlidesDefaults = useCallback(async () => {
     handleSlidesIndex()
-  }
+  }, [])
 
   const handleSlidesIndex = async () => {
     setError('')
@@ -102,83 +98,10 @@ export default function NewChallenge() {
     setSlidesDefaults()
   }
 
-  const methodName = 'challenges'
-  const challengeID =
-    '0x646a64766a356e766d6670633378787876657265616267723078676b33317000' // formatBytes32String(random32String())
-  const inputs: any[] = [challengeID]
-  const fragment = useMemo(
-    () => justDoItContract?.interface?.getFunction(methodName),
-    [justDoItContract, methodName],
-  )
-  const calls = useMemo(() => {
-    return justDoItContract && fragment
-      ? [
-          {
-            to: justDoItContract.address,
-            data: justDoItContract.interface.encodeFunctionData(
-              fragment,
-              inputs,
-            ),
-          },
-        ]
-      : []
-  }, [justDoItContract, fragment, inputs])
-  const testing = async () => {
-    try {
-      // console.log('address:', justDoItContract?.address)
-      // const code = await library?.getCode(justDoItContract?.address ?? '')
-      // console.log('code:', code)
-      const dateFromBlock = (await library?.getBlock(library.blockNumber))
-        ?.timestamp // Math.round(new Date().getTime() / 1000) + 60 * 60 * 25
-      const date = dateFromBlock ? dateFromBlock + 60 * 60 * 25 : 0
-      // console.log('date:', date)
-
-      // const res = await justDoItContract?.addChallengeETH(
-      //   challengeID,
-      //   'cmoshe2',
-      //   date,
-      //   {
-      //     value: ethers.utils.parseEther('0.0001'),
-      //     gasLimit: 160000,
-      //   },
-      // )
-
-      // const res2 = await justDoItContract?.supportChallenge(challengeID, {
-      //   value: ethers.utils.parseEther('0.0001'),
-      //   gasLimit: 160000,
-      // })
-
-      // console.log('res:', res)
-      // const res = await justDoItContract?.getChallenges()
-
-      // const ll: any = await library?.call(calls[0])
-      // let res2
-      // if (fragment)
-      //   res2 = justDoItContract?.interface.decodeFunctionResult(fragment, ll)
-      // console.log('ll:', res2)
-
-      // let ethereum = window.ethereum
-      // const defaultProvider = ethers.getDefaultProvider('kovan')
-      // const provider = new ethers.providers.Web3Provider(ethereum as any)
-      // const b = await provider.getBalance(
-      //   '0x18891C3b727c155282ED587042FAD5827A48a8c8',
-      // )
-      // console.log(await provider.listAccounts())
-      // console.log(account)
-    } catch (error) {
-      console.log('error:', error)
-    }
-  }
-  useEffect(() => {
-    setTimeout(() => {
-      testing()
-    }, 5000)
-  }, [])
-
   useEffect(() => {
     setMinDate(defaultDeadline())
     setSlidesDefaults()
-  }, [])
+  }, [setSlidesDefaults])
 
   let title = TITLE.START
   if (slidesIndex === 0 && firstNextIndication) {

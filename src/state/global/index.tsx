@@ -6,7 +6,12 @@ import {
   SetStateAction,
   ReactNode,
 } from 'react'
-import { Challenge, InformationBar, SupportChallenge } from '../../constants'
+import {
+  Challenge,
+  InformationBar,
+  OwnerReportResult,
+  SupportChallenge,
+} from '../../constants'
 
 export interface GlobalStateInterface {
   isDarkMode: boolean
@@ -16,7 +21,9 @@ export interface GlobalStateInterface {
   acountETHBalanceStr: string
   challenges: Challenge[]
   supportChallenges: SupportChallenge[]
+  ownerReportResults: OwnerReportResult[]
   informationBar: InformationBar
+  timeInSeconds: number
 }
 
 const GlobalStateContext = createContext({

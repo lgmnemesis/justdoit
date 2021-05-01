@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Challenge, SupportChallenge } from '../../constants'
+import { Challenge, OwnerReportResult, SupportChallenge } from '../../constants'
 import { useGlobalState } from '../../state/global'
 
 export function useWalletModalToggle() {
@@ -71,4 +71,24 @@ export function useSupportChallenges() {
 
   const supportChallenges = state.supportChallenges
   return { supportChallenges, setSupportChallenges }
+}
+
+export function useOwnerReportResults() {
+  const { state, setState } = useGlobalState()
+
+  const setOwnerReportResults = useCallback(
+    (challenges: OwnerReportResult[]) => {
+      const unique: OwnerReportResult[] = [
+        ...new Map(challenges.map((c) => [`${c.id}${c.owner}`, c])).values(),
+      ]
+      setState((current) => ({
+        ...current,
+        ownerReportResults: unique,
+      }))
+    },
+    [setState],
+  )
+
+  const ownerReportResults = state.ownerReportResults
+  return { ownerReportResults, setOwnerReportResults }
 }

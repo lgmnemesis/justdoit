@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { formatEther } from '@ethersproject/units'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Challenge } from '../../constants'
@@ -7,27 +7,18 @@ import {
   ChallengeEndLine,
   LightColor,
   PinkColor,
-  RedColor,
 } from './styles'
-
-const secondsToHms = (seconds: number) => {
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  const s = Math.floor((seconds % 3600) % 60)
-
-  const hDisplay = h > 0 ? (h < 10 ? `0${h}:` : `${h}:`) : '00:'
-  const mDisplay = m > 0 ? (m < 10 ? `0${m}:` : `${m}:`) : '00:'
-  const sDisplay = s > 0 ? (s < 10 ? `0${s}` : `${s}`) : '00'
-  return hDisplay + mDisplay + sDisplay
-}
+import { useTimeInSecondsTicker } from '../../hooks/User'
+import { oneDayInSeconds, secondsToHms } from '../../utils'
+import { TYPE } from '../../theme'
 
 export default function ChallengeDetails({
   challenge,
 }: {
   challenge: Challenge
 }) {
+  const { timeInSeconds } = useTimeInSecondsTicker()
   const [timeLeftText, setTimeLeftText] = useState('')
-  const [countdown, setcountdown] = useState(false)
 
   const supporters = useMemo(
     () => challenge?.supporters && Object.keys(challenge.supporters).length,
@@ -46,37 +37,21 @@ export default function ChallengeDetails({
     return formatEther(amountStaked ?? 0)
   }, [challenge.supporters])
 
-  const displayTimeLeft = useCallback((timestamp: number) => {
-    const nowInSeconds = new Date().getTime() / 1000
-    const timeLeftInSeconds = timestamp - nowInSeconds
-    const days = Math.floor(timeLeftInSeconds / (60 * 60 * 24))
+  useEffect(() => {
+    const timestamp = challenge.deadline?.toNumber()
+    if (!(timeInSeconds && timestamp)) return
+    const timeLeft = timestamp - timeInSeconds
+    const days = Math.floor(timeLeft / oneDayInSeconds)
     let result
     if (days > 1) {
       result = `${days} days`
-    } else if (timeLeftInSeconds >= 0) {
-      result = secondsToHms(timeLeftInSeconds)
-      setcountdown(true)
+    } else if (timeLeft > 0) {
+      result = secondsToHms(timeLeft)
     } else {
-      setcountdown(false)
-      result = ''
+      result = '00:00:00'
     }
     setTimeLeftText(result)
-  }, [])
-
-  useEffect(() => {
-    !countdown &&
-      challenge.deadline &&
-      displayTimeLeft(challenge.deadline?.toNumber())
-    let interval: NodeJS.Timeout
-    if (countdown) {
-      interval = setInterval(() => {
-        challenge.deadline && displayTimeLeft(challenge.deadline?.toNumber())
-      }, 1000)
-    }
-    return () => {
-      clearInterval(interval)
-    }
-  }, [challenge, countdown, displayTimeLeft])
+  }, [timeInSeconds, challenge.deadline])
 
   return (
     <>
@@ -97,10 +72,18 @@ export default function ChallengeDetails({
       )}
 
       <ChallengeLine>
-        {timeLeftText !== '' && <LightColor>Challenge ends in</LightColor>}
-        {timeLeftText === '' && <RedColor>Time is up</RedColor>}
+        {timeLeftText !== '00:00:00' ? (
+          <LightColor>Challenge ends in</LightColor>
+        ) : (
+          <TYPE.Yellow>Challenge ended</TYPE.Yellow>
+        )}
+
         <ChallengeEndLine>
-          <PinkColor>{timeLeftText}</PinkColor>
+          {timeLeftText !== '00:00:00' ? (
+            <PinkColor>{timeLeftText}</PinkColor>
+          ) : (
+            <TYPE.Yellow>{timeLeftText}</TYPE.Yellow>
+          )}
         </ChallengeEndLine>
       </ChallengeLine>
     </>

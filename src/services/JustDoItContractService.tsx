@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { ChallengeResult } from '../constants'
 import { useJustDoItContract } from '../hooks/contracts/useContract'
 import { calculateGasMargin } from '../utils'
 
@@ -58,5 +59,48 @@ export function useJustDoItContractService() {
     }
   }
 
-  return { addChallenge, supportChallenge }
+  const ownerReportResult = async (
+    challengeId: string,
+    result: ChallengeResult,
+  ) => {
+    try {
+      if (!justDoItContract) return null
+      const estimatedGas = await justDoItContract.estimateGas.ownerReportResult(
+        challengeId,
+        result,
+      )
+      const tx = await justDoItContract?.ownerReportResult(challengeId, {
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
+      return { tx: tx, error: null }
+    } catch (error) {
+      return { tx: null, error: error }
+    }
+  }
+
+  const supporterReportResult = async (
+    challengeId: string,
+    result: ChallengeResult,
+  ) => {
+    try {
+      if (!justDoItContract) return null
+      const estimatedGas = await justDoItContract.estimateGas.supporterReportResult(
+        challengeId,
+        result,
+      )
+      const tx = await justDoItContract?.supporterReportResult(challengeId, {
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
+      return { tx: tx, error: null }
+    } catch (error) {
+      return { tx: null, error: error }
+    }
+  }
+
+  return {
+    addChallenge,
+    supportChallenge,
+    ownerReportResult,
+    supporterReportResult,
+  }
 }

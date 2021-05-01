@@ -128,3 +128,16 @@ export function handleTxErrors(error: any): string | null {
   }
   return null
 }
+
+export const oneDayInSeconds = 60 * 60 * 24
+
+export const secondsToHms = (seconds: number) => {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = Math.floor((seconds % 3600) % 60)
+
+  const hDisplay = h > 0 ? (h < 10 ? `0${h}:` : `${h}:`) : '00:'
+  const mDisplay = m > 0 ? (m < 10 ? `0${m}:` : `${m}:`) : '00:'
+  const sDisplay = s > 0 ? (s < 10 ? `0${s}` : `${s}`) : '00'
+  return hDisplay + mDisplay + sDisplay
+}

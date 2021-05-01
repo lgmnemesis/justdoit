@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   AmountInputContainer,
   AmountInputWrapper,
@@ -43,45 +43,51 @@ export default function AmountInput({
   const [buttonDisabled, setButtonDisabled] = useState(true)
   const [buttonText, setButtonText] = useState(ButtonTextOptions.EnterAmount)
 
-  const handleAmountInput = (event: any) => {
-    const value: string = event.target.value
-    if (value.match('^[0-9]*[.,]?[0-9]*$')) {
-      setAmount(value)
-    }
-  }
+  const handleAmountInput = useCallback(
+    (event: any) => {
+      const value: string = event.target.value
+      if (value.match('^[0-9]*[.,]?[0-9]*$')) {
+        setAmount(value)
+      }
+    },
+    [setAmount],
+  )
 
-  const validateAmountInput = (value: string) => {
-    const amountFloat = parseFloat(value) || 0
-    const balance = parseFloat(balanceFormatStr ?? '') || 0
-    if (account && amountFloat >= balance) {
-      setButtonText(ButtonTextOptions.NotEnoughFunds)
-      setButtonDisabled(true)
-    } else if (account) {
-      setButtonText(ButtonTextOptions.EnterAmount)
-      setButtonDisabled(amountFloat === 0)
-    } else {
-      setButtonDisabled(false)
-      setButtonText(ButtonTextOptions.ConnectWallet)
-    }
-  }
+  const validateAmountInput = useCallback(
+    (value: string) => {
+      const amountFloat = parseFloat(value) || 0
+      const balance = parseFloat(balanceFormatStr ?? '') || 0
+      if (account && amountFloat >= balance) {
+        setButtonText(ButtonTextOptions.NotEnoughFunds)
+        setButtonDisabled(true)
+      } else if (account) {
+        setButtonText(ButtonTextOptions.EnterAmount)
+        setButtonDisabled(amountFloat === 0)
+      } else {
+        setButtonDisabled(false)
+        setButtonText(ButtonTextOptions.ConnectWallet)
+      }
+    },
+    [account, setButtonText, balanceFormatStr],
+  )
 
-  const handleButtonClicked = () => {
+  const handleButtonClicked = useCallback(() => {
     if (!account) {
       toggleWalletModal()
     } else {
       setAllIsDone(true)
     }
-  }
+  }, [account, toggleWalletModal, setAllIsDone])
 
   useEffect(() => {
     validateAmountInput(amount)
-  }, [account, amount, balanceFormatStr])
+  }, [account, validateAmountInput, amount, balanceFormatStr])
 
   useEffect(() => {
     if (isActive) {
       setTimeout(() => {
-        amountInputRef.current.focus()
-      }, 500)
+        amountInputRef?.current?.focus()
+      }, 800)
     }
   }, [isActive])
 

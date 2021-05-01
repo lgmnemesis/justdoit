@@ -1,12 +1,12 @@
 import { useState, useMemo, useEffect } from 'react'
 import { formatEther } from '@ethersproject/units'
-import { ChevronDown, ChevronUp } from 'react-feather'
+import { ChevronDown, ChevronUp, Coffee, Flag, Anchor } from 'react-feather'
 import { Challenge } from '../../constants'
 import { TYPE } from '../../theme'
 import {
   ChallengeContainer,
   ChallengeCard,
-  ChallengeName,
+  ChallengeHeader,
   ChallengeLine,
   ChallengeEndLine,
   ChallengeButton,
@@ -19,6 +19,9 @@ import {
 } from './styles'
 import ChallengeDetails from './ChallengeDetails'
 import SupportChallenge from '../SupportChallenge'
+import VoteOnChallenge from '../VoteOnChallenge'
+import { oneDayInSeconds } from '../../utils'
+import { useTimeInSecondsTicker } from '../../hooks/User'
 
 enum ButtonOptionsEnum {
   challengeOnGoing,
@@ -41,6 +44,7 @@ export default function DisplayChallenge({
   const [buttonOption, setButtonOption] = useState(
     ButtonOptionsEnum.supportChallenge,
   )
+  const { timeInSeconds } = useTimeInSecondsTicker()
   const timestamp = (challenge.deadline?.toNumber() || 1) * 1000
   const deadline = useMemo(() => new Date(timestamp).toDateString(), [
     timestamp,
@@ -87,21 +91,19 @@ export default function DisplayChallenge({
   }
 
   useEffect(() => {
-    const oneDay = 60 * 60 * 24
-    const twoDays = 2 * oneDay
-    const sevenDays = 7 * oneDay
-    const nowInSeconds = Math.floor(new Date().getTime() / 1000)
+    const twoDays = 2 * oneDayInSeconds
+    const sevenDays = 7 * oneDayInSeconds
     const deadline = challenge.deadline?.toNumber()
-    if (!deadline) return
-    const ownerTimeLeftToVote = deadline + twoDays - nowInSeconds
-    const supporterTimeLeftToVote = deadline + sevenDays - nowInSeconds
+    if (!deadline || !timeInSeconds) return
+    const ownerTimeLeftToVote = deadline + twoDays - timeInSeconds
+    const supporterTimeLeftToVote = deadline + sevenDays - timeInSeconds
     if (challenge.owner === account) {
       if (ownerTimeLeftToVote > 0 && ownerTimeLeftToVote < twoDays) {
         setButtonOption(ButtonOptionsEnum.submitReport)
       } else if (ownerTimeLeftToVote <= 0) {
         setButtonOption(ButtonOptionsEnum.challengeDone)
       } else if (ownerTimeLeftToVote > twoDays) {
-        if (deadline > nowInSeconds + oneDay) {
+        if (deadline > timeInSeconds + oneDayInSeconds) {
           setButtonOption(ButtonOptionsEnum.challengeOnGoing)
         } else {
           setButtonOption(ButtonOptionsEnum.challengeOverApproaching)
@@ -117,37 +119,62 @@ export default function DisplayChallenge({
       } else if (supporterTimeLeftToVote <= 0) {
         setButtonOption(ButtonOptionsEnum.challengeDone)
       } else if (ownerTimeLeftToVote > twoDays) {
-        if (deadline > nowInSeconds + oneDay) {
+        if (deadline > timeInSeconds + oneDayInSeconds) {
           setButtonOption(ButtonOptionsEnum.challengeOnGoing)
         } else {
           setButtonOption(ButtonOptionsEnum.challengeOverApproaching)
         }
       }
     }
-  }, [challenge.owner, challenge.deadline, account])
+  }, [
+    challenge.owner,
+    challenge.deadline,
+    challenge.supporters,
+    account,
+    timeInSeconds,
+  ])
 
   return (
     <>
       <ChallengeContainer>
         <ChallengeCard>
-          <ChallengeName>
+          <ChallengeHeader>
+            {isSupporting ? (
+              <TYPE.Yellow>
+                <Flag style={{ paddingTop: '2px', marginInlineEnd: '10px' }} />
+              </TYPE.Yellow>
+            ) : challenge.owner === account ? (
+              <TYPE.Green>
+                <Anchor
+                  style={{ paddingTop: '2px', marginInlineEnd: '10px' }}
+                />
+              </TYPE.Green>
+            ) : (
+              <TYPE.Yellow>
+                <Coffee
+                  style={{ paddingTop: '2px', marginInlineEnd: '10px' }}
+                />
+              </TYPE.Yellow>
+            )}
             <TYPE.LargeHeader>{challenge.name}</TYPE.LargeHeader>
-          </ChallengeName>
+          </ChallengeHeader>
           <Spacing />
           <ChallengeButtonContainer>
-            {buttonOption === ButtonOptionsEnum.challengeDone ||
-            buttonOption === ButtonOptionsEnum.challengeOnGoing ||
-            buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
+            <TYPE.MediumHeader>
+              {buttonOption === ButtonOptionsEnum.challengeDone ||
+              buttonOption === ButtonOptionsEnum.challengeOnGoing ||
               buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
-                <TYPE.Yellow>{getButtonText()}</TYPE.Yellow>
+                buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
+                  <TYPE.Yellow>{getButtonText()}</TYPE.Yellow>
+                ) : (
+                  <TYPE.Green>{getButtonText()}</TYPE.Green>
+                )
               ) : (
-                <TYPE.Green>{getButtonText()}</TYPE.Green>
-              )
-            ) : (
-              <ChallengeButton disabled={false} onClick={handleClick}>
-                {getButtonText()}
-              </ChallengeButton>
-            )}
+                <ChallengeButton disabled={false} onClick={handleClick}>
+                  {getButtonText()}
+                </ChallengeButton>
+              )}
+            </TYPE.MediumHeader>
           </ChallengeButtonContainer>
           <Spacing />
           <ChallengeLine>
@@ -181,11 +208,23 @@ export default function DisplayChallenge({
           {details ? <ChallengeDetails challenge={challenge} /> : null}
         </ChallengeCard>
       </ChallengeContainer>
-      <SupportChallenge
-        challenge={challenge}
-        isOpenModal={isOpenModal}
-        setIsOpenModal={setIsOpenModal}
-      />
+
+      {buttonOption === ButtonOptionsEnum.supportChallenge && (
+        <SupportChallenge
+          challenge={challenge}
+          isOpenModal={isOpenModal}
+          setIsOpenModal={setIsOpenModal}
+        />
+      )}
+      {(buttonOption === ButtonOptionsEnum.castYourVote ||
+        buttonOption === ButtonOptionsEnum.submitReport) && (
+        <VoteOnChallenge
+          challenge={challenge}
+          isOwner={challenge.owner === account}
+          isOpenModal={isOpenModal}
+          setIsOpenModal={setIsOpenModal}
+        />
+      )}
     </>
   )
 }

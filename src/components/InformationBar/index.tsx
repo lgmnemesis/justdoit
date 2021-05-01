@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { X } from 'react-feather'
 import Loader from '../Loader'
 import { useInformationBar } from '../../hooks/User'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 
 const BarContainer = styled.div`
   display: flex;
@@ -36,9 +36,9 @@ const CloseButton = styled.div`
 export default function InformationBar() {
   const { informationBar, setInformationBar } = useInformationBar()
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setInformationBar({ message: '', isOpen: false })
-  }
+  }, [setInformationBar])
 
   useEffect(() => {
     const timer = informationBar?.closeOnTimeout

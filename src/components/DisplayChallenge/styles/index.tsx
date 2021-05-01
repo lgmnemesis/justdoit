@@ -19,12 +19,25 @@ export const ChallengeCard = styled(LightCard)`
   width: 100%;
   height: 100%;
   text-align: center;
+  padding-top: 10px;
+`
+
+export const ChallengeHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: 100%;
+  padding: 10px;
+  word-break: break-word;
+  color: ${({ theme }) => theme.nice1};
 `
 
 export const ChallengeName = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: start;
   width: 100%;
   padding: 10px;
-  text-align: start;
   word-break: break-word;
   color: ${({ theme }) => theme.nice1};
 `
