@@ -10,18 +10,24 @@ import HowItWorksPage from './HowItWorks'
 const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
-  align-items: flex-start;
+  align-items: center;
   overflow-x: hidden;
 `
 
 const HeaderWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
+  position: fixed;
+  top: 0;
   width: 100%;
-  justify-content: space-between;
+  z-index: 99;
+  justify-content: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: ${({ theme }) => theme.bg2};
 `
 
 const BodyWrapper = styled.div`
   width: 100%;
+  max-width: 1200px;
   margin-top: 70px;
   overflow-y: auto;
   overflow-x: hidden;

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { IonItem, IonDatetime } from '@ionic/react'
 import 'date-fns'

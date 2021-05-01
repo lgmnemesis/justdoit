@@ -1,8 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { formatEther } from '@ethersproject/units'
 import { ChevronDown, ChevronUp } from 'react-feather'
 import { Challenge } from '../../constants'
-
 import { TYPE } from '../../theme'
 import {
   ChallengeContainer,
@@ -21,6 +20,15 @@ import {
 import ChallengeDetails from './ChallengeDetails'
 import SupportChallenge from '../SupportChallenge'
 
+enum ButtonOptionsEnum {
+  challengeOnGoing,
+  challengeOverApproaching,
+  submitReport,
+  challengeDone,
+  supportChallenge,
+  castYourVote,
+}
+
 export default function DisplayChallenge({
   challenge,
   account,
@@ -30,6 +38,9 @@ export default function DisplayChallenge({
 }) {
   const [details, setDetails] = useState(false)
   const [isOpenModal, setIsOpenModal] = useState(false)
+  const [buttonOption, setButtonOption] = useState(
+    ButtonOptionsEnum.supportChallenge,
+  )
   const timestamp = (challenge.deadline?.toNumber() || 1) * 1000
   const deadline = useMemo(() => new Date(timestamp).toDateString(), [
     timestamp,
@@ -55,6 +66,66 @@ export default function DisplayChallenge({
     setIsOpenModal(true)
   }
 
+  const getButtonText = () => {
+    switch (buttonOption) {
+      case ButtonOptionsEnum.challengeOnGoing:
+        return 'Challenge in progress'
+      case ButtonOptionsEnum.challengeOverApproaching:
+        return 'Challenge ends soon'
+      case ButtonOptionsEnum.submitReport:
+        return 'Submit Report'
+      case ButtonOptionsEnum.supportChallenge:
+        return 'Support Challenge'
+      case ButtonOptionsEnum.castYourVote:
+        return 'Cast Your Vote'
+      case ButtonOptionsEnum.challengeDone:
+        return 'Challenge is Over'
+
+      default:
+        return ''
+    }
+  }
+
+  useEffect(() => {
+    const oneDay = 60 * 60 * 24
+    const twoDays = 2 * oneDay
+    const sevenDays = 7 * oneDay
+    const nowInSeconds = Math.floor(new Date().getTime() / 1000)
+    const deadline = challenge.deadline?.toNumber()
+    if (!deadline) return
+    const ownerTimeLeftToVote = deadline + twoDays - nowInSeconds
+    const supporterTimeLeftToVote = deadline + sevenDays - nowInSeconds
+    if (challenge.owner === account) {
+      if (ownerTimeLeftToVote > 0 && ownerTimeLeftToVote < twoDays) {
+        setButtonOption(ButtonOptionsEnum.submitReport)
+      } else if (ownerTimeLeftToVote <= 0) {
+        setButtonOption(ButtonOptionsEnum.challengeDone)
+      } else if (ownerTimeLeftToVote > twoDays) {
+        if (deadline > nowInSeconds + oneDay) {
+          setButtonOption(ButtonOptionsEnum.challengeOnGoing)
+        } else {
+          setButtonOption(ButtonOptionsEnum.challengeOverApproaching)
+        }
+      }
+    } else if (
+      account &&
+      challenge?.supporters &&
+      challenge.supporters[account]?.supporter === account
+    ) {
+      if (supporterTimeLeftToVote > 0 && supporterTimeLeftToVote < sevenDays) {
+        setButtonOption(ButtonOptionsEnum.castYourVote)
+      } else if (supporterTimeLeftToVote <= 0) {
+        setButtonOption(ButtonOptionsEnum.challengeDone)
+      } else if (ownerTimeLeftToVote > twoDays) {
+        if (deadline > nowInSeconds + oneDay) {
+          setButtonOption(ButtonOptionsEnum.challengeOnGoing)
+        } else {
+          setButtonOption(ButtonOptionsEnum.challengeOverApproaching)
+        }
+      }
+    }
+  }, [challenge.owner, challenge.deadline, account])
+
   return (
     <>
       <ChallengeContainer>
@@ -64,9 +135,17 @@ export default function DisplayChallenge({
           </ChallengeName>
           <Spacing />
           <ChallengeButtonContainer>
-            {challenge.owner !== account && (
+            {buttonOption === ButtonOptionsEnum.challengeDone ||
+            buttonOption === ButtonOptionsEnum.challengeOnGoing ||
+            buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
+              buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
+                <TYPE.Yellow>{getButtonText()}</TYPE.Yellow>
+              ) : (
+                <TYPE.Green>{getButtonText()}</TYPE.Green>
+              )
+            ) : (
               <ChallengeButton disabled={false} onClick={handleClick}>
-                {isSupporting ? 'Cast Your Vote' : 'Support Challenge'}
+                {getButtonText()}
               </ChallengeButton>
             )}
           </ChallengeButtonContainer>

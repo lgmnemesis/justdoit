@@ -57,7 +57,9 @@ export function useSupportChallenges() {
   const setSupportChallenges = useCallback(
     (challenges: SupportChallenge[]) => {
       const unique: SupportChallenge[] = [
-        ...new Map(challenges.map((c) => [c.id, c])).values(),
+        ...new Map(
+          challenges.map((c) => [`${c.id}${c.supporter}`, c]),
+        ).values(),
       ]
       setState((current) => ({
         ...current,

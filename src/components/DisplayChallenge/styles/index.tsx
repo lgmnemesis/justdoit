@@ -61,6 +61,10 @@ export const PinkColor = styled.span`
   color: ${({ theme }) => theme.pink1};
 `
 
+export const RedColor = styled.span`
+  color: ${({ theme }) => theme.red1};
+`
+
 export const BorderLine = styled.div`
   width: 100%;
   border-top: 1px solid;

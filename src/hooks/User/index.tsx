@@ -45,7 +45,7 @@ const informationBarReduceAction = (
           currentState?.action?.id === info?.action?.id &&
           currentState?.action?.type === ChallengeActionType.ADD_CHALLENGE
         ) {
-          result.message = 'Adding Challenge, Done.'
+          result.message = 'Adding Challenge, Confirmed.'
           result.isOpen = true
           result.isSuccessColor = true
           result.closeOnTimeout = 3000
@@ -56,7 +56,7 @@ const informationBarReduceAction = (
           currentState?.action?.id === info?.action?.id &&
           currentState?.action?.type === ChallengeActionType.SUPPORT_CHALLEGE
         ) {
-          result.message = 'Supporting Challenge, Done.'
+          result.message = 'Supporting Challenge, Confirmed.'
           result.isOpen = true
           result.isSuccessColor = true
           result.closeOnTimeout = 3000
@@ -67,7 +67,7 @@ const informationBarReduceAction = (
           currentState?.action?.id === info?.action?.id &&
           currentState?.action?.type === ChallengeActionType.VOTE_ON_CHALLENGE
         ) {
-          result.message = 'Voting on Challenge, Done.'
+          result.message = 'Voting on Challenge, Confirmed.'
           result.isOpen = true
           result.isSuccessColor = true
           result.closeOnTimeout = 3000

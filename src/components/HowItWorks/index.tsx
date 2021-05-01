@@ -30,7 +30,7 @@ export default function HowItWorks() {
             How it works
           </TYPE.LargeHeader>
           <TYPE.Body style={{ lineHeight: '1.5' }}>
-            Set a goal you want to achive, challenge your self. Set a deadline.
+            Set a goal you want to achive, challenge yourself. Set a deadline.
             Stake your tokens.
             <li>Complete the challenge and earn reword tokens.</li>
             <li>Fail to complete and lose your staking.</li>

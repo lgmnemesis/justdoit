@@ -13,6 +13,7 @@ import { YellowCard } from '../Card'
 import { NETWORK_LABELS } from '../../constants'
 
 const HeaderFrame = styled.div`
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 120px;
   align-items: center;
@@ -21,12 +22,8 @@ const HeaderFrame = styled.div`
   flex-direction: row;
   width: 100%;
   height: 70px;
-  top: 0;
-  position: fixed;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  max-width: 1800px;
   padding: 1rem;
-  z-index: 99;
-  background-color: ${({ theme }) => theme.bg2};
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;

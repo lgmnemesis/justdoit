@@ -17,13 +17,9 @@ export default function SupportChallengeUpdater(): null {
   const { informationBar, dispatchInformationBar } = useInformationBar()
   const eventName = JustDoItEvents.SupportChallengeEvent
 
-  const eventArgs = useMemo(() => {
-    return account && [account, null]
-  }, [account])
-
   const filter = useMemo(() => {
-    return eventArgs && contract?.filters[eventName](...eventArgs)
-  }, [contract, eventArgs, eventName])
+    return contract?.filters[eventName]()
+  }, [contract, eventName])
 
   const update = useCallback(
     (cEvent) => {

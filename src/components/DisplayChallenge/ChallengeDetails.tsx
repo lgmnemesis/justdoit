@@ -1,15 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { formatEther } from '@ethersproject/units'
+import { BigNumber } from '@ethersproject/bignumber'
 import { Challenge } from '../../constants'
-import {
-  useGetChallenge,
-  useGetOwnerResult,
-} from '../../hooks/contracts/justDoIt'
 import {
   ChallengeLine,
   ChallengeEndLine,
   LightColor,
   PinkColor,
+  RedColor,
 } from './styles'
 
 const secondsToHms = (seconds: number) => {
@@ -28,23 +26,25 @@ export default function ChallengeDetails({
 }: {
   challenge: Challenge
 }) {
-  const ownerResult = useGetOwnerResult(challenge.id)
-  const challengeOnChain = useGetChallenge(challenge.id)
   const [timeLeftText, setTimeLeftText] = useState('')
   const [countdown, setcountdown] = useState(false)
 
   const supporters = useMemo(
-    () =>
-      challengeOnChain?.supporters && challengeOnChain.supporters.toNumber(),
-    [challengeOnChain?.supporters],
+    () => challenge?.supporters && Object.keys(challenge.supporters).length,
+    [challenge.supporters],
   )
 
-  const supprtersAmountStaked = useMemo(
-    () =>
-      challengeOnChain?.supprtersAmountStaked &&
-      formatEther(challengeOnChain.supprtersAmountStaked ?? 0),
-    [challengeOnChain?.supprtersAmountStaked],
-  )
+  const supprtersAmountStaked = useMemo(() => {
+    const sp = challenge?.supporters
+    let amountStaked = BigNumber.from('0')
+    for (const key in sp) {
+      const amount = sp[key].amountStaked
+      if (amount) {
+        amountStaked = amountStaked.add(amount)
+      }
+    }
+    return formatEther(amountStaked ?? 0)
+  }, [challenge.supporters])
 
   const displayTimeLeft = useCallback((timestamp: number) => {
     const nowInSeconds = new Date().getTime() / 1000
@@ -97,7 +97,8 @@ export default function ChallengeDetails({
       )}
 
       <ChallengeLine>
-        <LightColor>Challenge ends in</LightColor>
+        {timeLeftText !== '' && <LightColor>Challenge ends in</LightColor>}
+        {timeLeftText === '' && <RedColor>Time is up</RedColor>}
         <ChallengeEndLine>
           <PinkColor>{timeLeftText}</PinkColor>
         </ChallengeEndLine>

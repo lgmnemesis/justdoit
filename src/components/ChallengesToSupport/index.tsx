@@ -33,37 +33,48 @@ export default function ChallengesToSupport() {
   const { supportChallenges } = useSupportChallenges()
   const { challenges } = useChallenges()
 
-  const ongoingChallenges: Challenge[] | undefined = useMemo(() => {
-    return challenges?.filter((c) => {
-      return c.owner === account
-    })
-  }, [challenges, account])
-
-  const supportedChallenges: Challenge[] | undefined = useMemo(() => {
-    const combined: Challenge[] = []
-    const filtered = supportChallenges?.filter((sc) => {
-      return sc.supporter === account
-    })
-    filtered?.forEach((supporter) => {
-      const ch = { ...challenges?.find((c) => c.id === supporter.id) }
-      if (ch) {
-        if (!ch.supporters) ch.supporters = {}
-        if (account) {
-          ch.supporters[account] = { ...supporter }
-          combined.push(ch)
-        }
+  const allChallenges: Challenge[] | undefined = useMemo(() => {
+    return challenges?.map((c) => {
+      const cc = { ...c }
+      const supporters = supportChallenges?.filter((sc) => sc.id === c.id)
+      if (supporters) {
+        if (!cc.supporters) cc.supporters = {}
+        supporters?.forEach((sp) => {
+          if (cc.supporters && sp.supporter) {
+            cc.supporters[sp.supporter] = { ...sp }
+          }
+        })
       }
+      return { ...cc }
     })
-    return combined
   }, [challenges, supportChallenges, account])
 
-  const challengesToSupport: Challenge[] | undefined = useMemo(() => {
-    return challenges?.filter((c) => {
+  const ongoingChallenges: Challenge[] | undefined = useMemo(() => {
+    return allChallenges?.filter((c) => {
+      return c.owner === account
+    })
+  }, [allChallenges, account])
+
+  const supportedChallenges: Challenge[] | undefined = useMemo(() => {
+    return allChallenges?.filter((c) => {
       return (
-        c.owner !== account && !supportedChallenges.find((sc) => sc.id === c.id)
+        account && c.supporters && c.supporters[account]?.supporter === account
       )
     })
-  }, [challenges, supportedChallenges, account])
+  }, [allChallenges, account])
+
+  const challengesToSupport: Challenge[] | undefined = useMemo(() => {
+    return allChallenges?.filter((c) => {
+      return (
+        c.owner !== account &&
+        !(
+          account &&
+          c.supporters &&
+          c.supporters[account]?.supporter === account
+        )
+      )
+    })
+  }, [allChallenges, account])
 
   const renderSection = useCallback(
     (challenges: Challenge[], title: string) => {
