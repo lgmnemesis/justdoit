@@ -38,6 +38,7 @@ export default function ChallengesToSupport() {
   const { ownerReportResults } = useOwnerReportResults()
 
   const allChallenges: Challenge[] | undefined = useMemo(() => {
+    console.log('moshe allChallenges')
     return challenges?.map((c) => {
       const cc = { ...c }
       const supporters = supportChallenges?.filter((sc) => sc.id === c.id)
@@ -60,12 +61,14 @@ export default function ChallengesToSupport() {
   }, [challenges, supportChallenges, ownerReportResults])
 
   const ongoingChallenges: Challenge[] | undefined = useMemo(() => {
+    console.log('moshe: ongoingChallenges')
     return allChallenges?.filter((c) => {
       return c.owner === account
     })
   }, [allChallenges, account])
 
   const supportedChallenges: Challenge[] | undefined = useMemo(() => {
+    console.log('moshe supportedChallenges')
     return allChallenges?.filter((c) => {
       return (
         account && c.supporters && c.supporters[account]?.supporter === account
@@ -74,6 +77,7 @@ export default function ChallengesToSupport() {
   }, [allChallenges, account])
 
   const challengesToSupport: Challenge[] | undefined = useMemo(() => {
+    console.log('moshe challengesToSupport')
     return allChallenges?.filter((c) => {
       return (
         c.owner !== account &&

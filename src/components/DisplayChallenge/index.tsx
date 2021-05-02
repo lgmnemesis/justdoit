@@ -22,6 +22,7 @@ import SupportChallenge from '../SupportChallenge'
 import VoteOnChallenge from '../VoteOnChallenge'
 import { oneDayInSeconds } from '../../utils'
 import { useTimeInSecondsTicker } from '../../hooks/User'
+import { useInformationBar } from '../../hooks/User'
 
 enum ButtonOptionsEnum {
   challengeOnGoing,
@@ -40,11 +41,15 @@ export default function DisplayChallenge({
   account: string | undefined | null
 }) {
   const [details, setDetails] = useState(false)
-  const [isOpenModal, setIsOpenModal] = useState(false)
+  const [modalStatus, setModalStatus] = useState({
+    isOpen: false,
+    actionDone: false,
+  })
   const [buttonOption, setButtonOption] = useState(
     ButtonOptionsEnum.supportChallenge,
   )
   const { timeInSeconds } = useTimeInSecondsTicker()
+  const { informationBar } = useInformationBar()
   const timestamp = (challenge.deadline?.toNumber() || 1) * 1000
   const deadline = useMemo(() => new Date(timestamp).toDateString(), [
     timestamp,
@@ -67,7 +72,7 @@ export default function DisplayChallenge({
   }
 
   const handleClick = () => {
-    setIsOpenModal(true)
+    setModalStatus({ isOpen: true, actionDone: false })
   }
 
   const getButtonText = () => {
@@ -134,6 +139,14 @@ export default function DisplayChallenge({
     timeInSeconds,
   ])
 
+  useEffect(() => {
+    if (informationBar && !informationBar.isOpen) {
+      setModalStatus((current) => {
+        return { isOpen: current.isOpen, actionDone: false }
+      })
+    }
+  }, [informationBar, setModalStatus])
+
   return (
     <>
       <ChallengeContainer>
@@ -170,8 +183,11 @@ export default function DisplayChallenge({
                   <TYPE.Green>{getButtonText()}</TYPE.Green>
                 )
               ) : (
-                <ChallengeButton disabled={false} onClick={handleClick}>
-                  {getButtonText()}
+                <ChallengeButton
+                  disabled={modalStatus?.actionDone}
+                  onClick={handleClick}
+                >
+                  {modalStatus?.actionDone ? 'Pending' : getButtonText()}
                 </ChallengeButton>
               )}
             </TYPE.MediumHeader>
@@ -212,8 +228,8 @@ export default function DisplayChallenge({
       {buttonOption === ButtonOptionsEnum.supportChallenge && (
         <SupportChallenge
           challenge={challenge}
-          isOpenModal={isOpenModal}
-          setIsOpenModal={setIsOpenModal}
+          isOpenModal={modalStatus?.isOpen}
+          setModalStatus={setModalStatus}
         />
       )}
       {(buttonOption === ButtonOptionsEnum.castYourVote ||
@@ -221,8 +237,8 @@ export default function DisplayChallenge({
         <VoteOnChallenge
           challenge={challenge}
           isOwner={challenge.owner === account}
-          isOpenModal={isOpenModal}
-          setIsOpenModal={setIsOpenModal}
+          isOpenModal={modalStatus?.isOpen}
+          setModalStatus={setModalStatus}
         />
       )}
     </>

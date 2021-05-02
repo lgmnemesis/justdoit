@@ -34,14 +34,15 @@ export function useBlockNumber() {
 export function useChallenges() {
   const { state, setState } = useGlobalState()
 
+  const unique = useCallback((challenges: Challenge[]) => {
+    return [...new Map(challenges.map((c) => [c.id, c])).values()]
+  }, [])
+
   const setChallenges = useCallback(
     (challenges: Challenge[]) => {
-      const unique: Challenge[] = [
-        ...new Map(challenges.map((c) => [c.id, c])).values(),
-      ]
       setState((current) => ({
         ...current,
-        challenges: unique,
+        challenges: unique([...(current?.challenges ?? []), ...challenges]),
       }))
     },
     [setState],

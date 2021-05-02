@@ -109,12 +109,14 @@ export default function VoteOnChallenge({
   challenge,
   isOwner,
   isOpenModal,
-  setIsOpenModal,
+  setModalStatus,
 }: {
   challenge: Challenge
   isOwner: boolean
   isOpenModal: boolean
-  setIsOpenModal: Dispatch<SetStateAction<boolean>>
+  setModalStatus: Dispatch<
+    SetStateAction<{ isOpen: boolean; actionDone: boolean }>
+  >
 }) {
   const [isFetching, setIsFetching] = useState(false)
   const [result, setResult] = useState<ChallengeResult>(0)
@@ -151,11 +153,17 @@ export default function VoteOnChallenge({
         ChallengeActionType.VOTE_ON_CHALLENGE,
       )
     setIsFetching(false)
-    closeModal()
+    closeModalOnAction(true)
+  }
+
+  const closeModalOnAction = (actionDone = false) => {
+    setModalStatus({ isOpen: false, actionDone })
   }
 
   const closeModal = () => {
-    setIsOpenModal(false)
+    setModalStatus((current) => {
+      return { isOpen: false, actionDone: current.actionDone }
+    })
   }
 
   return (

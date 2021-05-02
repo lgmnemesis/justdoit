@@ -13,7 +13,7 @@ import { useInformationBar } from '../../hooks/User'
 export default function ChallengesUpdater(): null {
   const { account, library, chainId } = useWeb3React()
   const contract = useJustDoItContract()
-  const { challenges, setChallenges } = useChallenges()
+  const { setChallenges } = useChallenges()
   const { informationBar, dispatchInformationBar } = useInformationBar()
   const eventName = JustDoItEvents.ChallengeAddedEvent
 
@@ -36,16 +36,16 @@ export default function ChallengesUpdater(): null {
           )
       }
 
-      setChallenges([...(challenges ?? []), challenge])
+      setChallenges([{ ...challenge }])
     },
-    [challenges, setChallenges, informationBar, dispatchInformationBar],
+    [setChallenges, informationBar, dispatchInformationBar],
   )
 
   useEffect(() => {
     filter &&
       contract?.queryFilter(filter, 0).then((q: any) => {
         const challenges: Challenge[] = q?.map((c: any) => c.args)
-        setChallenges(challenges)
+        setChallenges([...challenges])
       })
   }, [contract, filter, setChallenges, library, account, chainId])
 

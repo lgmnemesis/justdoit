@@ -72,11 +72,13 @@ const BodyInner = styled.div`
 export default function SupportChallenge({
   challenge,
   isOpenModal,
-  setIsOpenModal,
+  setModalStatus,
 }: {
   challenge: Challenge
   isOpenModal: boolean
-  setIsOpenModal: Dispatch<SetStateAction<boolean>>
+  setModalStatus: Dispatch<
+    SetStateAction<{ isOpen: boolean; actionDone: boolean }>
+  >
 }) {
   const [amount, setAmount] = useState('')
   const [isFetching, setIsFetching] = useState(false)
@@ -105,11 +107,17 @@ export default function SupportChallenge({
       dispatchInformationBar(challenge.id, ChallengeActionType.SUPPORT_CHALLEGE)
     setAmount('')
     setIsFetching(false)
-    closeModal()
+    closeModalOnAction(true)
+  }
+
+  const closeModalOnAction = (actionDone = false) => {
+    setModalStatus({ isOpen: false, actionDone })
   }
 
   const closeModal = () => {
-    setIsOpenModal(false)
+    setModalStatus((current) => {
+      return { isOpen: false, actionDone: current.actionDone }
+    })
   }
 
   return (

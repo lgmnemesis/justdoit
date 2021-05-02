@@ -36,7 +36,7 @@ export default function OwnerReportResultUpdater(): null {
           )
       }
 
-      setOwnerReportResults([...(ownerReportResults ?? []), challenge])
+      setOwnerReportResults([...(ownerReportResults ?? []), { ...challenge }])
     },
     [
       ownerReportResults,
@@ -51,7 +51,7 @@ export default function OwnerReportResultUpdater(): null {
     filter &&
       contract?.queryFilter(filter).then((q: any) => {
         const challenges: OwnerReportResult[] = q?.map((c: any) => c.args)
-        setOwnerReportResults(challenges)
+        setOwnerReportResults([...challenges])
       })
   }, [contract, filter, setOwnerReportResults, library, account, chainId])
 

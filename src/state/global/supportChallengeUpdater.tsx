@@ -36,7 +36,7 @@ export default function SupportChallengeUpdater(): null {
           )
       }
 
-      setSupportChallenges([...(supportChallenges ?? []), challenge])
+      setSupportChallenges([...(supportChallenges ?? []), { ...challenge }])
     },
     [
       supportChallenges,
@@ -51,7 +51,7 @@ export default function SupportChallengeUpdater(): null {
     filter &&
       contract?.queryFilter(filter).then((q: any) => {
         const challenges: SupportChallenge[] = q?.map((c: any) => c.args)
-        setSupportChallenges(challenges)
+        setSupportChallenges([...challenges])
       })
   }, [contract, filter, setSupportChallenges, library, account, chainId])
 
