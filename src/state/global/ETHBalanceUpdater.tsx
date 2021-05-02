@@ -12,6 +12,7 @@ export function ETHBalanceUpdater() {
   const prevBalanceRef = useRef(0)
 
   const getBalance = useCallback(async () => {
+    console.log('moshe getBalance')
     if (!!library && !!account) {
       const rawBalance = await library.getBalance(account)
       const value = parseFloat(formatEther(rawBalance))
@@ -21,7 +22,7 @@ export function ETHBalanceUpdater() {
         setAccountEthBalance(value, valueStr)
       }
     }
-  }, [account, library])
+  }, [account, library, setAccountEthBalance])
 
   useEffect(() => {
     getBalance()

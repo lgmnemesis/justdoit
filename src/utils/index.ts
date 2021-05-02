@@ -141,3 +141,13 @@ export const secondsToHms = (seconds: number) => {
   const sDisplay = s > 0 ? (s < 10 ? `0${s}` : `${s}`) : '00'
   return hDisplay + mDisplay + sDisplay
 }
+
+export const secondsToHm = (seconds: number) => {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+
+  const hDisplay = h > 0 ? `${h}h` : ''
+  const mDisplay = m > 0 ? `${m}m` : ''
+  const sDisplay = seconds > 0 && seconds < 60 ? '1m' : ''
+  return `${hDisplay} ${mDisplay} ${sDisplay}`
+}

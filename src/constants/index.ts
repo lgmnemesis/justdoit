@@ -29,7 +29,7 @@ export interface Challenge extends ChallengeAddedEvent {
   supporters?: {
     [key: string]: SupportChallenge
   }
-  ownerResult?: OwnerReportResult
+  ownerResult?: ChallengeResult
 }
 
 export enum ChallengeResult {

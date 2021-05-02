@@ -8,8 +8,8 @@ import {
   LightColor,
   PinkColor,
 } from './styles'
-import { useTimeInSecondsTicker } from '../../hooks/User'
-import { oneDayInSeconds, secondsToHms } from '../../utils'
+import { useBlockTimestamp } from '../../hooks/User'
+import { oneDayInSeconds, secondsToHm } from '../../utils'
 import { TYPE } from '../../theme'
 
 export default function ChallengeDetails({
@@ -17,7 +17,7 @@ export default function ChallengeDetails({
 }: {
   challenge: Challenge
 }) {
-  const { timeInSeconds } = useTimeInSecondsTicker()
+  const { blockTimestamp } = useBlockTimestamp()
   const [timeLeftText, setTimeLeftText] = useState('')
 
   const supporters = useMemo(
@@ -39,19 +39,19 @@ export default function ChallengeDetails({
 
   useEffect(() => {
     const timestamp = challenge.deadline?.toNumber()
-    if (!(timeInSeconds && timestamp)) return
-    const timeLeft = timestamp - timeInSeconds
+    if (!(blockTimestamp && timestamp)) return
+    const timeLeft = timestamp - blockTimestamp
     const days = Math.floor(timeLeft / oneDayInSeconds)
     let result
     if (days > 1) {
       result = `${days} days`
     } else if (timeLeft > 0) {
-      result = secondsToHms(timeLeft)
+      result = secondsToHm(timeLeft)
     } else {
-      result = '00:00:00'
+      result = ''
     }
     setTimeLeftText(result)
-  }, [timeInSeconds, challenge.deadline])
+  }, [blockTimestamp, challenge.deadline])
 
   return (
     <>
@@ -72,14 +72,14 @@ export default function ChallengeDetails({
       )}
 
       <ChallengeLine>
-        {timeLeftText !== '00:00:00' ? (
+        {timeLeftText !== '' ? (
           <LightColor>Challenge ends in</LightColor>
         ) : (
           <TYPE.Yellow>Challenge ended</TYPE.Yellow>
         )}
 
         <ChallengeEndLine>
-          {timeLeftText !== '00:00:00' ? (
+          {timeLeftText !== '' ? (
             <PinkColor>{timeLeftText}</PinkColor>
           ) : (
             <TYPE.Yellow>{timeLeftText}</TYPE.Yellow>

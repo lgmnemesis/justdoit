@@ -45,7 +45,7 @@ export function useChallenges() {
         challenges: unique([...(current?.challenges ?? []), ...challenges]),
       }))
     },
-    [setState],
+    [setState, unique],
   )
 
   const challenges = state.challenges

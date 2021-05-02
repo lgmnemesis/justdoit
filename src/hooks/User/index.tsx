@@ -6,6 +6,7 @@ export function useIsDarkMode() {
   const { state, setState } = useGlobalState()
 
   const toggleDarkMode = useCallback(() => {
+    console.log('moshe toggleDarkMode')
     setState((current) => ({
       ...current,
       isDarkMode: !current.isDarkMode,
@@ -129,4 +130,21 @@ export function useTimeInSecondsTicker() {
 
   const timeInSeconds = state.timeInSeconds
   return { timeInSeconds, setTimeInSeconds }
+}
+
+export function useBlockTimestamp() {
+  const { state, setState } = useGlobalState()
+
+  const setBlockTimestamp = useCallback(
+    (timestamp: number) => {
+      setState((current) => ({
+        ...current,
+        blockTimestamp: timestamp,
+      }))
+    },
+    [setState],
+  )
+
+  const blockTimestamp = state.blockTimestamp
+  return { blockTimestamp, setBlockTimestamp }
 }

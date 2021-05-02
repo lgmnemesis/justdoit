@@ -24,6 +24,7 @@ export interface GlobalStateInterface {
   ownerReportResults: OwnerReportResult[]
   informationBar: InformationBar
   timeInSeconds: number
+  blockTimestamp: number
 }
 
 const GlobalStateContext = createContext({

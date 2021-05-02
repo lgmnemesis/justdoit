@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { formatEther } from '@ethersproject/units'
 import { ChevronDown, ChevronUp, Coffee, Flag, Anchor } from 'react-feather'
-import { Challenge } from '../../constants'
+import { Challenge, ChallengeResult } from '../../constants'
 import { TYPE } from '../../theme'
 import {
   ChallengeContainer,
@@ -21,7 +21,7 @@ import ChallengeDetails from './ChallengeDetails'
 import SupportChallenge from '../SupportChallenge'
 import VoteOnChallenge from '../VoteOnChallenge'
 import { oneDayInSeconds } from '../../utils'
-import { useTimeInSecondsTicker } from '../../hooks/User'
+import { useBlockTimestamp } from '../../hooks/User'
 import { useInformationBar } from '../../hooks/User'
 
 enum ButtonOptionsEnum {
@@ -31,6 +31,8 @@ enum ButtonOptionsEnum {
   challengeDone,
   supportChallenge,
   castYourVote,
+  waitingForOwner,
+  waitingForSupporters,
 }
 
 export default function DisplayChallenge({
@@ -48,7 +50,7 @@ export default function DisplayChallenge({
   const [buttonOption, setButtonOption] = useState(
     ButtonOptionsEnum.supportChallenge,
   )
-  const { timeInSeconds } = useTimeInSecondsTicker()
+  const { blockTimestamp } = useBlockTimestamp()
   const { informationBar } = useInformationBar()
   const timestamp = (challenge.deadline?.toNumber() || 1) * 1000
   const deadline = useMemo(() => new Date(timestamp).toDateString(), [
@@ -99,16 +101,25 @@ export default function DisplayChallenge({
     const twoDays = 2 * oneDayInSeconds
     const sevenDays = 7 * oneDayInSeconds
     const deadline = challenge.deadline?.toNumber()
-    if (!deadline || !timeInSeconds) return
-    const ownerTimeLeftToVote = deadline + twoDays - timeInSeconds
-    const supporterTimeLeftToVote = deadline + sevenDays - timeInSeconds
+    if (!deadline || !blockTimestamp) return
+    const ownerTimeLeftToVote = deadline + twoDays - blockTimestamp
+    const supporterTimeLeftToVote = deadline + sevenDays - blockTimestamp
+    const ownerResult = challenge?.ownerResult ?? ChallengeResult.Initial
     if (challenge.owner === account) {
       if (ownerTimeLeftToVote > 0 && ownerTimeLeftToVote < twoDays) {
-        setButtonOption(ButtonOptionsEnum.submitReport)
+        if (ownerResult === ChallengeResult.Success) {
+          // TODO: owner reported on success. indication for him to wait untill the 7 days are over
+          setButtonOption(ButtonOptionsEnum.waitingForSupporters)
+        } else if (ownerResult === ChallengeResult.Failure) {
+          // TODO: Challenge is over. owner is a looser
+          setButtonOption(ButtonOptionsEnum.challengeDone)
+        } else {
+          setButtonOption(ButtonOptionsEnum.submitReport)
+        }
       } else if (ownerTimeLeftToVote <= 0) {
         setButtonOption(ButtonOptionsEnum.challengeDone)
       } else if (ownerTimeLeftToVote > twoDays) {
-        if (deadline > timeInSeconds + oneDayInSeconds) {
+        if (deadline > blockTimestamp + oneDayInSeconds) {
           setButtonOption(ButtonOptionsEnum.challengeOnGoing)
         } else {
           setButtonOption(ButtonOptionsEnum.challengeOverApproaching)
@@ -120,11 +131,26 @@ export default function DisplayChallenge({
       challenge.supporters[account]?.supporter === account
     ) {
       if (supporterTimeLeftToVote > 0 && supporterTimeLeftToVote < sevenDays) {
-        setButtonOption(ButtonOptionsEnum.castYourVote)
+        // Check if owner reported on success within the 2 days period
+        // if yes, 'castYourVote' if No:
+        // if owner reported false - challenge is over no need to vote
+        // if owner didnt report and 2 days period is done - challenge is over no need to vote
+        if (ownerResult === ChallengeResult.Success) {
+          setButtonOption(ButtonOptionsEnum.castYourVote)
+        } else if (ownerResult === ChallengeResult.Failure) {
+          // TODO: Challenge is over. collect your initial support and rewards
+          setButtonOption(ButtonOptionsEnum.challengeDone)
+        } else if (
+          supporterTimeLeftToVote > 0 &&
+          supporterTimeLeftToVote < twoDays
+        ) {
+          // TODO: Owner did not reported yet... waiting untill 2 days are done
+          setButtonOption(ButtonOptionsEnum.waitingForOwner)
+        }
       } else if (supporterTimeLeftToVote <= 0) {
         setButtonOption(ButtonOptionsEnum.challengeDone)
       } else if (ownerTimeLeftToVote > twoDays) {
-        if (deadline > timeInSeconds + oneDayInSeconds) {
+        if (deadline > blockTimestamp + oneDayInSeconds) {
           setButtonOption(ButtonOptionsEnum.challengeOnGoing)
         } else {
           setButtonOption(ButtonOptionsEnum.challengeOverApproaching)
@@ -135,8 +161,9 @@ export default function DisplayChallenge({
     challenge.owner,
     challenge.deadline,
     challenge.supporters,
+    challenge.ownerResult,
     account,
-    timeInSeconds,
+    blockTimestamp,
   ])
 
   useEffect(() => {

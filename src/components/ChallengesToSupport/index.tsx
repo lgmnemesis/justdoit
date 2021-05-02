@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react'
 import styled from 'styled-components'
 import DisplayChallenge from '../../components/DisplayChallenge'
-import { Challenge } from '../../constants'
+import { Challenge, ChallengeResult } from '../../constants'
 import { useActiveWeb3React } from '../../hooks'
 import {
   useChallenges,
@@ -52,10 +52,8 @@ export default function ChallengesToSupport() {
       }
 
       const ownerResult = ownerReportResults?.find((o) => o.id === c.id)
-      if (ownerResult) {
-        if (!cc.ownerResult) cc.ownerResult = {}
-        cc.ownerResult = { ...ownerResult }
-      }
+      cc.ownerResult = ownerResult?.result ?? ChallengeResult.Initial
+
       return { ...cc }
     })
   }, [challenges, supportChallenges, ownerReportResults])

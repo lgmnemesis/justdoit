@@ -26,7 +26,7 @@ export default function DarkModeUpdater(): null {
     } catch (error) {
       throw Error(error)
     }
-  }, [isDarkMode])
+  }, [isDarkMode, toggleDarkMode])
 
   useEffect(() => {
     persistDarkMode()

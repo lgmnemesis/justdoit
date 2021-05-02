@@ -1,4 +1,5 @@
 import BlockNumberUpdater from './blockNumberUpdater'
+import BlockTimestampUpdater from './blockTimestampUpdater'
 import ChallengesUpdater from './challengesUpdater'
 import OwnerReportResultUpdater from './ownerReportResultUpdater'
 import SupportChallengeUpdater from './supportChallengeUpdater'
@@ -16,6 +17,7 @@ export default function GlobalStateUpdater() {
       <OwnerReportResultUpdater />
       <SupportChallengeUpdater />
       <TimeInSecondsTickerUpdater />
+      <BlockTimestampUpdater />
     </>
   )
 }
