@@ -7,6 +7,7 @@ import {
   useChallenges,
   useSupportChallenges,
   useOwnerReportResults,
+  useSupporterReportResults,
 } from '../../hooks/Application'
 import { TYPE } from '../../theme'
 
@@ -36,9 +37,9 @@ export default function ChallengesToSupport() {
   const { challenges } = useChallenges()
   const { supportChallenges } = useSupportChallenges()
   const { ownerReportResults } = useOwnerReportResults()
+  const { supporterReportResults } = useSupporterReportResults()
 
   const allChallenges: Challenge[] | undefined = useMemo(() => {
-    console.log('moshe allChallenges')
     return challenges?.map((c) => {
       const cc = { ...c }
       const supporters = supportChallenges?.filter((sc) => sc.id === c.id)
@@ -53,20 +54,36 @@ export default function ChallengesToSupport() {
 
       const ownerResult = ownerReportResults?.find((o) => o.id === c.id)
       cc.ownerResult = ownerResult?.result ?? ChallengeResult.Initial
+      cc.ownerReportPath = ownerResult?.path ?? ''
+
+      const supportersResult = supporterReportResults?.filter(
+        (sr) => sr.id === c.id,
+      )
+      if (supportersResult) {
+        if (!cc.supportersResult) cc.supportersResult = {}
+        supportersResult?.forEach((sr) => {
+          if (cc.supportersResult && sr.supporter) {
+            cc.supportersResult[sr.supporter] = { ...sr }
+          }
+        })
+      }
 
       return { ...cc }
     })
-  }, [challenges, supportChallenges, ownerReportResults])
+  }, [
+    challenges,
+    supportChallenges,
+    ownerReportResults,
+    supporterReportResults,
+  ])
 
   const ongoingChallenges: Challenge[] | undefined = useMemo(() => {
-    console.log('moshe: ongoingChallenges')
     return allChallenges?.filter((c) => {
       return c.owner === account
     })
   }, [allChallenges, account])
 
   const supportedChallenges: Challenge[] | undefined = useMemo(() => {
-    console.log('moshe supportedChallenges')
     return allChallenges?.filter((c) => {
       return (
         account && c.supporters && c.supporters[account]?.supporter === account
@@ -75,7 +92,6 @@ export default function ChallengesToSupport() {
   }, [allChallenges, account])
 
   const challengesToSupport: Challenge[] | undefined = useMemo(() => {
-    console.log('moshe challengesToSupport')
     return allChallenges?.filter((c) => {
       return (
         c.owner !== account &&
@@ -114,14 +130,18 @@ export default function ChallengesToSupport() {
 
   return (
     <>
-      {ongoingChallenges &&
-        ongoingChallenges?.length > 0 &&
-        renderSection(ongoingChallenges, 'My Ongoing Challenges')}
-      <Spacing />
-      {supportedChallenges &&
-        supportedChallenges?.length > 0 &&
-        renderSection(supportedChallenges, 'My Supported Challenges')}
-      <Spacing />
+      {ongoingChallenges && ongoingChallenges?.length > 0 && (
+        <>
+          {renderSection(ongoingChallenges, 'My Ongoing Challenges')}
+          <Spacing />
+        </>
+      )}
+      {supportedChallenges && supportedChallenges?.length > 0 && (
+        <>
+          {renderSection(supportedChallenges, 'My Supported Challenges')}
+          <Spacing />
+        </>
+      )}
       {challengesToSupport &&
         challengesToSupport?.length > 0 &&
         renderSection(challengesToSupport, 'Challenges to Support')}

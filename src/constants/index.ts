@@ -30,6 +30,10 @@ export interface Challenge extends ChallengeAddedEvent {
     [key: string]: SupportChallenge
   }
   ownerResult?: ChallengeResult
+  ownerReportPath?: string
+  supportersResult?: {
+    [key: string]: SupporterReportResult
+  }
 }
 
 export enum ChallengeResult {
@@ -62,6 +66,7 @@ export interface OwnerReportResultEvent {
   id?: string
   owner?: string
   result?: ChallengeResult
+  path?: string
 }
 
 export interface SupporterReportResultEvent {
@@ -79,6 +84,7 @@ export enum ChallengeActionType {
   SUPPORT_CHALLEGE,
   VOTE_ON_CHALLENGE,
   OWNER_REPORT_CHALLENGE,
+  SUPPORTER_REPORT_CHALLENGE,
   CONFIRM_ADD_CHALLENGE,
   CONFIRM_SUPPORT_CHALLENGE,
   CONFIRM_VOTE_ON_CHALLENGE,

@@ -8,6 +8,13 @@ import { PortisConnector } from '@web3-react/portis-connector'
 const POLLING_INTERVAL = 12000
 const NETWORK_URL = process.env.REACT_APP_NETWORK_URL ?? ''
 
+export const IPFS_HOST = process.env.REACT_APP_IPFS_HOST ?? 'ipfs.infura.io'
+export const IPFS_PORT: number = parseInt(
+  process.env.REACT_APP_IPFS_PORT ?? '5001',
+)
+export const IPFS_URL_PREFFIX =
+  process.env.REACT_APP_IPFS_URL_PREFFIX ?? 'https://ipfs.infura.io/ipfs'
+
 export enum ChainId {
   MAINNET = 1,
   ROPSTEN = 3,

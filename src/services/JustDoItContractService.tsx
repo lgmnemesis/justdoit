@@ -62,16 +62,23 @@ export function useJustDoItContractService() {
   const ownerReportResult = async (
     challengeId: string,
     result: ChallengeResult,
+    path: string,
   ) => {
     try {
       if (!justDoItContract) return null
       const estimatedGas = await justDoItContract.estimateGas.ownerReportResult(
         challengeId,
         result,
+        path,
       )
-      const tx = await justDoItContract?.ownerReportResult(challengeId, {
-        gasLimit: calculateGasMargin(estimatedGas),
-      })
+      const tx = await justDoItContract?.ownerReportResult(
+        challengeId,
+        result,
+        path,
+        {
+          gasLimit: calculateGasMargin(estimatedGas),
+        },
+      )
       return { tx: tx, error: null }
     } catch (error) {
       return { tx: null, error: error }
@@ -81,16 +88,23 @@ export function useJustDoItContractService() {
   const supporterReportResult = async (
     challengeId: string,
     result: ChallengeResult,
+    path: string,
   ) => {
     try {
       if (!justDoItContract) return null
       const estimatedGas = await justDoItContract.estimateGas.supporterReportResult(
         challengeId,
         result,
+        path,
       )
-      const tx = await justDoItContract?.supporterReportResult(challengeId, {
-        gasLimit: calculateGasMargin(estimatedGas),
-      })
+      const tx = await justDoItContract?.supporterReportResult(
+        challengeId,
+        result,
+        path,
+        {
+          gasLimit: calculateGasMargin(estimatedGas),
+        },
+      )
       return { tx: tx, error: null }
     } catch (error) {
       return { tx: null, error: error }

@@ -25,6 +25,7 @@ import { useBlockTimestamp } from '../../hooks/User'
 import { useInformationBar } from '../../hooks/User'
 
 enum ButtonOptionsEnum {
+  InitialState,
   challengeOnGoing,
   challengeOverApproaching,
   submitReport,
@@ -48,7 +49,7 @@ export default function DisplayChallenge({
     actionDone: false,
   })
   const [buttonOption, setButtonOption] = useState(
-    ButtonOptionsEnum.supportChallenge,
+    ButtonOptionsEnum.InitialState,
   )
   const { blockTimestamp } = useBlockTimestamp()
   const { informationBar } = useInformationBar()
@@ -89,22 +90,26 @@ export default function DisplayChallenge({
         return 'Support Challenge'
       case ButtonOptionsEnum.castYourVote:
         return 'Cast Your Vote'
+      case ButtonOptionsEnum.waitingForOwner:
+        return 'Waiting on challenger report'
+      case ButtonOptionsEnum.waitingForSupporters:
+        return 'Waiting on supporters to finish voting'
       case ButtonOptionsEnum.challengeDone:
         return 'Challenge is Over'
 
       default:
-        return ''
+        return ButtonOptionsEnum.InitialState
     }
   }
 
   useEffect(() => {
     const twoDays = 2 * oneDayInSeconds
     const sevenDays = 7 * oneDayInSeconds
-    const deadline = challenge.deadline?.toNumber()
-    if (!deadline || !blockTimestamp) return
+    const deadline = challenge?.deadline?.toNumber()
+    if (!challenge || !account || !deadline || !blockTimestamp) return
     const ownerTimeLeftToVote = deadline + twoDays - blockTimestamp
     const supporterTimeLeftToVote = deadline + sevenDays - blockTimestamp
-    const ownerResult = challenge?.ownerResult ?? ChallengeResult.Initial
+    const ownerResult = challenge.ownerResult ?? ChallengeResult.Initial
     if (challenge.owner === account) {
       if (ownerTimeLeftToVote > 0 && ownerTimeLeftToVote < twoDays) {
         if (ownerResult === ChallengeResult.Success) {
@@ -126,8 +131,7 @@ export default function DisplayChallenge({
         }
       }
     } else if (
-      account &&
-      challenge?.supporters &&
+      challenge.supporters &&
       challenge.supporters[account]?.supporter === account
     ) {
       if (supporterTimeLeftToVote > 0 && supporterTimeLeftToVote < sevenDays) {
@@ -136,13 +140,24 @@ export default function DisplayChallenge({
         // if owner reported false - challenge is over no need to vote
         // if owner didnt report and 2 days period is done - challenge is over no need to vote
         if (ownerResult === ChallengeResult.Success) {
-          setButtonOption(ButtonOptionsEnum.castYourVote)
+          if (
+            challenge.supportersResult &&
+            challenge.supportersResult[account] &&
+            (challenge.supportersResult[account]?.result ===
+              ChallengeResult.Success ||
+              challenge.supportersResult[account]?.result ===
+                ChallengeResult.Failure)
+          ) {
+            setButtonOption(ButtonOptionsEnum.waitingForSupporters)
+          } else {
+            setButtonOption(ButtonOptionsEnum.castYourVote)
+          }
         } else if (ownerResult === ChallengeResult.Failure) {
           // TODO: Challenge is over. collect your initial support and rewards
           setButtonOption(ButtonOptionsEnum.challengeDone)
         } else if (
           supporterTimeLeftToVote > 0 &&
-          supporterTimeLeftToVote < twoDays
+          supporterTimeLeftToVote > sevenDays - twoDays
         ) {
           // TODO: Owner did not reported yet... waiting untill 2 days are done
           setButtonOption(ButtonOptionsEnum.waitingForOwner)
@@ -156,8 +171,13 @@ export default function DisplayChallenge({
           setButtonOption(ButtonOptionsEnum.challengeOverApproaching)
         }
       }
+    } else if (deadline <= blockTimestamp) {
+      setButtonOption(ButtonOptionsEnum.challengeDone)
+    } else {
+      setButtonOption(ButtonOptionsEnum.supportChallenge)
     }
   }, [
+    challenge,
     challenge.owner,
     challenge.deadline,
     challenge.supporters,
@@ -201,22 +221,28 @@ export default function DisplayChallenge({
           <Spacing />
           <ChallengeButtonContainer>
             <TYPE.MediumHeader>
-              {buttonOption === ButtonOptionsEnum.challengeDone ||
-              buttonOption === ButtonOptionsEnum.challengeOnGoing ||
-              buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
-                buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
-                  <TYPE.Yellow>{getButtonText()}</TYPE.Yellow>
+              {buttonOption !== ButtonOptionsEnum.InitialState &&
+                (buttonOption === ButtonOptionsEnum.waitingForOwner ||
+                buttonOption === ButtonOptionsEnum.waitingForSupporters ? (
+                  <TYPE.Blue>{getButtonText()}</TYPE.Blue>
+                ) : buttonOption === ButtonOptionsEnum.challengeDone ||
+                  buttonOption === ButtonOptionsEnum.challengeOnGoing ||
+                  buttonOption ===
+                    ButtonOptionsEnum.challengeOverApproaching ? (
+                  buttonOption ===
+                  ButtonOptionsEnum.challengeOverApproaching ? (
+                    <TYPE.Yellow>{getButtonText()}</TYPE.Yellow>
+                  ) : (
+                    <TYPE.Green>{getButtonText()}</TYPE.Green>
+                  )
                 ) : (
-                  <TYPE.Green>{getButtonText()}</TYPE.Green>
-                )
-              ) : (
-                <ChallengeButton
-                  disabled={modalStatus?.actionDone}
-                  onClick={handleClick}
-                >
-                  {modalStatus?.actionDone ? 'Pending' : getButtonText()}
-                </ChallengeButton>
-              )}
+                  <ChallengeButton
+                    disabled={modalStatus?.actionDone}
+                    onClick={handleClick}
+                  >
+                    {modalStatus?.actionDone ? 'Pending' : getButtonText()}
+                  </ChallengeButton>
+                ))}
             </TYPE.MediumHeader>
           </ChallengeButtonContainer>
           <Spacing />
@@ -263,7 +289,7 @@ export default function DisplayChallenge({
         buttonOption === ButtonOptionsEnum.submitReport) && (
         <VoteOnChallenge
           challenge={challenge}
-          isOwner={challenge.owner === account}
+          isOwner={true || challenge.owner === account}
           isOpenModal={modalStatus?.isOpen}
           setModalStatus={setModalStatus}
         />

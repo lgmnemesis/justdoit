@@ -11,6 +11,7 @@ import {
   InformationBar,
   OwnerReportResult,
   SupportChallenge,
+  SupporterReportResult,
 } from '../../constants'
 
 export interface GlobalStateInterface {
@@ -22,6 +23,7 @@ export interface GlobalStateInterface {
   challenges: Challenge[]
   supportChallenges: SupportChallenge[]
   ownerReportResults: OwnerReportResult[]
+  supporterReportResult: SupporterReportResult[]
   informationBar: InformationBar
   timeInSeconds: number
   blockTimestamp: number

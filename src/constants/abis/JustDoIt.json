@@ -78,6 +78,12 @@
         "internalType": "enum JustDoIt.Result",
         "name": "result",
         "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "path",
+        "type": "string"
       }
     ],
     "name": "OwnerReportResult",
@@ -172,6 +178,11 @@
         "internalType": "enum JustDoIt.Result",
         "name": "resultFromOwner",
         "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "ownerReportPath",
+        "type": "string"
       },
       {
         "internalType": "uint256",
@@ -437,6 +448,11 @@
         "internalType": "enum JustDoIt.Result",
         "name": "_result",
         "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "_path",
+        "type": "string"
       }
     ],
     "name": "ownerReportResult",

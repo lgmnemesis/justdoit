@@ -6,7 +6,6 @@ export function useIsDarkMode() {
   const { state, setState } = useGlobalState()
 
   const toggleDarkMode = useCallback(() => {
-    console.log('moshe toggleDarkMode')
     setState((current) => ({
       ...current,
       isDarkMode: !current.isDarkMode,
@@ -41,6 +40,11 @@ const informationBarReduceAction = (
         result.isOpen = true
         result.isSpinning = true
         break
+      case ChallengeActionType.OWNER_REPORT_CHALLENGE:
+        result.message = 'Report Submition'
+        result.isOpen = true
+        result.isSpinning = true
+        break
       case ChallengeActionType.CONFIRM_ADD_CHALLENGE:
         if (
           currentState?.action?.id === info?.action?.id &&
@@ -69,6 +73,18 @@ const informationBarReduceAction = (
           currentState?.action?.type === ChallengeActionType.VOTE_ON_CHALLENGE
         ) {
           result.message = 'Voting on Challenge, Confirmed.'
+          result.isOpen = true
+          result.isSuccessColor = true
+          result.closeOnTimeout = 3000
+        }
+        break
+      case ChallengeActionType.CONFIRM_OWNER_REPORT_CHALLENGE:
+        if (
+          currentState?.action?.id === info?.action?.id &&
+          currentState?.action?.type ===
+            ChallengeActionType.OWNER_REPORT_CHALLENGE
+        ) {
+          result.message = 'Report Submition, Confirmed.'
           result.isOpen = true
           result.isSuccessColor = true
           result.closeOnTimeout = 3000

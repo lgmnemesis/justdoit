@@ -105,19 +105,25 @@ export default function SupportChallenge({
   const supportChallengeDone = () => {
     challenge?.id &&
       dispatchInformationBar(challenge.id, ChallengeActionType.SUPPORT_CHALLEGE)
-    setAmount('')
-    setIsFetching(false)
     closeModalOnAction(true)
   }
 
   const closeModalOnAction = (actionDone = false) => {
+    reset()
     setModalStatus({ isOpen: false, actionDone })
   }
 
   const closeModal = () => {
+    reset()
     setModalStatus((current) => {
       return { isOpen: false, actionDone: current.actionDone }
     })
+  }
+
+  const reset = () => {
+    setIsFetching(false)
+    setError('')
+    setAmount('')
   }
 
   return (

@@ -101,6 +101,10 @@ const random32String = (): string => {
   ).join('')
 }
 
+export const generateId = (): string => {
+  return generateChallengeId()
+}
+
 export const generateChallengeId = (): string => {
   return formatBytes32String(random32String())
 }
@@ -112,9 +116,9 @@ export function calculateGasMargin(value: BigNumber): BigNumber {
     .div(BigNumber.from(10000))
 }
 
-export function handleTxErrors(error: any): string | null {
+export function handleTxErrors(error: any, isOwner?: boolean): string | null {
   const DEFAULT_ERROR =
-    'Challenge was not added. Please make sure you are connected correctly and try again'
+    'No action was made. Please make sure you are connected correctly and try again'
   if (error) {
     const code = error.code
     const message: string = error?.data?.message
@@ -123,6 +127,11 @@ export function handleTxErrors(error: any): string | null {
     }
     if (message?.match('Deadline too short')) {
       return 'You set the deadline too soon. Please fix it and try again'
+    }
+    if (message?.match('Not in a report time window')) {
+      return isOwner
+        ? 'Reporting time window is not met'
+        : 'Voting time window is not met'
     }
     return DEFAULT_ERROR
   }

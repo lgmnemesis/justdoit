@@ -31,6 +31,7 @@
     "date-fns": "^2.21.1",
     "ethers": "^5.1.0",
     "inter-ui": "^3.18.0",
+    "ipfs-http-client": "^49.0.4",
     "polished": "^4.1.1",
     "react": "^17.0.1",
     "react-device-detect": "^1.17.0",
@@ -69,6 +70,7 @@
   },
   "devDependencies": {
     "@types/crypto-js": "^4.0.1",
+    "@types/pako": "^1.0.1",
     "@types/react-router-dom": "^5.1.7",
     "@types/rebass": "^4.0.8",
     "@types/styled-components": "^5.1.9"

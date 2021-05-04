@@ -116,6 +116,7 @@ export default function AmountInput({
             maxLength={79}
             spellCheck={false}
             value={amount}
+            disabled={showSpinner}
             onChange={handleAmountInput}
           />
           <TokenDisplay>

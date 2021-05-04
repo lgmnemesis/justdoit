@@ -11,16 +11,13 @@ import { TYPE } from '../../theme'
 import { handleTxErrors } from '../../utils'
 import { useInformationBar } from '../../hooks/User'
 import { useJustDoItContractService } from '../../services/JustDoItContractService'
+import OwnerReport, { FilesState } from '../OwnerReport'
+import { useIpfs } from '../../hooks/Application/useIpfs'
+import Loader from '../Loader'
 
 const ModalWrapper = styled(IonModal)`
-  .modal-shadow {
-    width: unset;
-    height: unset;
-  }
   .modal-wrapper {
     --background: ${({ theme }) => theme.bg2};
-    width: unset;
-    height: unset;
     max-width: 400px;
   }
 `
@@ -98,11 +95,19 @@ const VoteButton = styled.div<{ disabled: boolean; isSuccess: boolean }>`
 `
 
 const SpacingX = styled.div`
-  padding: 0 20px;
+  padding: 0 25px;
 `
 
 const LineContainer = styled.div`
   padding: 10px 0;
+`
+
+const LoaderWrapper = styled.div`
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 export default function VoteOnChallenge({
@@ -119,51 +124,72 @@ export default function VoteOnChallenge({
   >
 }) {
   const [isFetching, setIsFetching] = useState(false)
-  const [result, setResult] = useState<ChallengeResult>(0)
   const [error, setError] = useState('')
+  const [report, setReport] = useState<FilesState[]>()
   const {
     ownerReportResult,
     supporterReportResult,
   } = useJustDoItContractService()
   const { dispatchInformationBar } = useInformationBar()
+  const { addData } = useIpfs()
 
-  const handleAllIsDone = (isDone: boolean) => {
-    if (isDone) {
-      setIsFetching(true)
-      setError('')
-      setTimeout(async () => {
-        const tx =
-          challenge?.id &&
-          (isOwner
-            ? await ownerReportResult(challenge.id, result)
-            : await supporterReportResult(challenge.id, result))
-        console.log('tx:', tx)
-        const error = tx && handleTxErrors(tx.error)
-        error && setError(error)
-        tx && !error && voteOnChallengeDone()
-        setIsFetching(false)
-      }, 0)
+  const handleVote = async (isSuccess: boolean) => {
+    const result = isSuccess ? ChallengeResult.Success : ChallengeResult.Failure
+    setIsFetching(true)
+    setError('')
+    let path = ''
+    if (report && report.length > 0) {
+      const file = report[0]
+      const ipfsPath = await addData(file.arrayBuffer)
+      if (!ipfsPath) {
+        setIsFetching(true)
+        setError(
+          'Can not store the image you selected. Not submiting your Report',
+        )
+        return
+      }
+      path = ipfsPath
     }
+    setTimeout(async () => {
+      const tx =
+        challenge?.id &&
+        (isOwner
+          ? await ownerReportResult(challenge.id, result, path)
+          : await supporterReportResult(challenge.id, result, path))
+      console.log('tx:', tx)
+      const error = tx && handleTxErrors(tx.error, isOwner)
+      error && setError(error)
+      tx && !error && voteOnChallengeDone()
+      setIsFetching(false)
+    }, 0)
   }
 
   const voteOnChallengeDone = () => {
     challenge?.id &&
       dispatchInformationBar(
         challenge.id,
-        ChallengeActionType.VOTE_ON_CHALLENGE,
+        isOwner
+          ? ChallengeActionType.OWNER_REPORT_CHALLENGE
+          : ChallengeActionType.VOTE_ON_CHALLENGE,
       )
-    setIsFetching(false)
     closeModalOnAction(true)
   }
 
   const closeModalOnAction = (actionDone = false) => {
+    reset()
     setModalStatus({ isOpen: false, actionDone })
   }
 
   const closeModal = () => {
+    reset()
     setModalStatus((current) => {
       return { isOpen: false, actionDone: current.actionDone }
     })
+  }
+
+  const reset = () => {
+    setIsFetching(false)
+    setError('')
   }
 
   return (
@@ -187,12 +213,37 @@ export default function VoteOnChallenge({
             <TYPE.Main>{challenge.name}</TYPE.Main>
             <TYPE.Error error={!!error}>{error}</TYPE.Error>
           </LineContainer>
+          <LineContainer>
+            <OwnerReport
+              isOwner={isOwner}
+              challenge={challenge}
+              setReport={setReport}
+            />
+          </LineContainer>
           <RadioButtonsContainer>
-            <VoteButton disabled={true} isSuccess={true}>
+            <VoteButton
+              disabled={isFetching}
+              isSuccess={true}
+              onClick={() => {
+                handleVote(true)
+              }}
+            >
               <ThumbsUp style={{ color: 'green' }} />
             </VoteButton>
-            <SpacingX />
-            <VoteButton disabled={true} isSuccess={false}>
+            {isFetching ? (
+              <LoaderWrapper>
+                <Loader />
+              </LoaderWrapper>
+            ) : (
+              <SpacingX />
+            )}
+            <VoteButton
+              disabled={isFetching}
+              isSuccess={false}
+              onClick={() => {
+                handleVote(false)
+              }}
+            >
               <ThumbsDown style={{ color: 'red' }} />
             </VoteButton>
           </RadioButtonsContainer>

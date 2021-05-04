@@ -14,7 +14,6 @@ export default function BlockNumberUpdater(): null {
       const provider: Web3Provider = library
       const blockData = await provider?.getBlock(blockNumber)
       blockData && setBlockTimestamp(blockData.timestamp)
-      console.log('moshe block timestamp:', blockData?.timestamp)
     },
     [setBlockTimestamp, library],
   )

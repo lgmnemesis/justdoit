@@ -1,8 +1,9 @@
 import BlockNumberUpdater from './blockNumberUpdater'
 import BlockTimestampUpdater from './blockTimestampUpdater'
 import ChallengesUpdater from './challengesUpdater'
-import OwnerReportResultUpdater from './ownerReportResultUpdater'
 import SupportChallengeUpdater from './supportChallengeUpdater'
+import OwnerReportResultUpdater from './ownerReportResultUpdater'
+import SupporterReportResultUpdater from './supporterReportResultUpdater'
 import DarkModeUpdater from './darkModeUpdater'
 import { ETHBalanceUpdater } from './ETHBalanceUpdater'
 import TimeInSecondsTickerUpdater from './timeInSecondsTickerUpdater'
@@ -14,8 +15,9 @@ export default function GlobalStateUpdater() {
       <BlockNumberUpdater />
       <ETHBalanceUpdater />
       <ChallengesUpdater />
-      <OwnerReportResultUpdater />
       <SupportChallengeUpdater />
+      <OwnerReportResultUpdater />
+      <SupporterReportResultUpdater />
       <TimeInSecondsTickerUpdater />
       <BlockTimestampUpdater />
     </>
