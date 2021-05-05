@@ -34,6 +34,8 @@ export interface Challenge extends ChallengeAddedEvent {
   supportersResult?: {
     [key: string]: SupporterReportResult
   }
+  votedSuccess?: number
+  votedFailure?: number
 }
 
 export enum ChallengeResult {

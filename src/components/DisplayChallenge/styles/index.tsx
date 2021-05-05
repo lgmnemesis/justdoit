@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { LightCard } from '../../Card'
-import { ButtonLight } from '../../Button'
+import { ButtonLight, ButtonSecondary } from '../../Button'
 
 export const ChallengeContainer = styled.div`
   display: flex;
@@ -47,6 +47,18 @@ export const ChallengeLine = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
+`
+
+export const ShareButton = styled.div`
+  padding: 0 5px;
+  cursor: pointer;
+  color: ${({ theme }) => theme.nice1};
+`
+
+export const ClaimButton = styled(ButtonSecondary)`
+  padding: 8px;
+  width: 80px;
+  border-radius: 10px;
 `
 
 export const ChallengeNoButtonContainer = styled.div`

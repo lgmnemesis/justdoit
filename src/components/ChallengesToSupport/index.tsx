@@ -9,6 +9,7 @@ import {
   useOwnerReportResults,
   useSupporterReportResults,
 } from '../../hooks/Application'
+import { useBlockTimestamp } from '../../hooks/User'
 import { TYPE } from '../../theme'
 
 export const GridContainer = styled.div`
@@ -38,6 +39,7 @@ export default function ChallengesToSupport() {
   const { supportChallenges } = useSupportChallenges()
   const { ownerReportResults } = useOwnerReportResults()
   const { supporterReportResults } = useSupporterReportResults()
+  const { blockTimestamp } = useBlockTimestamp()
 
   const allChallenges: Challenge[] | undefined = useMemo(() => {
     return challenges?.map((c) => {
@@ -56,6 +58,8 @@ export default function ChallengesToSupport() {
       cc.ownerResult = ownerResult?.result ?? ChallengeResult.Initial
       cc.ownerReportPath = ownerResult?.path ?? ''
 
+      let votedSuccess = 0
+      let votedFailure = 0
       const supportersResult = supporterReportResults?.filter(
         (sr) => sr.id === c.id,
       )
@@ -64,9 +68,17 @@ export default function ChallengesToSupport() {
         supportersResult?.forEach((sr) => {
           if (cc.supportersResult && sr.supporter) {
             cc.supportersResult[sr.supporter] = { ...sr }
+            const vote = sr?.result
+            if (vote === ChallengeResult.Success) {
+              votedSuccess++
+            } else if (vote === ChallengeResult.Failure) {
+              votedFailure++
+            }
           }
         })
       }
+      cc.votedSuccess = votedSuccess
+      cc.votedFailure = votedFailure
 
       return { ...cc }
     })
@@ -92,9 +104,12 @@ export default function ChallengesToSupport() {
   }, [allChallenges, account])
 
   const challengesToSupport: Challenge[] | undefined = useMemo(() => {
+    const timestamp = blockTimestamp ?? 0
     return allChallenges?.filter((c) => {
       return (
         c.owner !== account &&
+        c.deadline &&
+        c.deadline.toNumber() > timestamp &&
         !(
           account &&
           c.supporters &&
@@ -102,7 +117,7 @@ export default function ChallengesToSupport() {
         )
       )
     })
-  }, [allChallenges, account])
+  }, [allChallenges, blockTimestamp, account])
 
   const renderSection = useCallback(
     (challenges: Challenge[], title: string) => {
@@ -132,7 +147,7 @@ export default function ChallengesToSupport() {
     <>
       {ongoingChallenges && ongoingChallenges?.length > 0 && (
         <>
-          {renderSection(ongoingChallenges, 'My Ongoing Challenges')}
+          {renderSection(ongoingChallenges, 'My Challenges')}
           <Spacing />
         </>
       )}

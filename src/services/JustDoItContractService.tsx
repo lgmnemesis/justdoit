@@ -108,10 +108,74 @@ export function useJustDoItContractService() {
     }
   }
 
+  const getOwnerRewards = async (challengeId: string) => {
+    try {
+      if (!justDoItContract) return null
+      const estimatedGas = await justDoItContract.estimateGas.getOwnerRewards(
+        challengeId,
+      )
+      const tx = await justDoItContract?.getOwnerRewards(challengeId, {
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
+      return { tx: tx, error: null }
+    } catch (error) {
+      return { tx: null, error: error }
+    }
+  }
+
+  const getSupporterRewards = async (challengeId: string) => {
+    try {
+      if (!justDoItContract) return null
+      const estimatedGas = await justDoItContract.estimateGas.getSupporterRewards(
+        challengeId,
+      )
+      const tx = await justDoItContract?.getSupporterRewards(challengeId, {
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
+      return { tx: tx, error: null }
+    } catch (error) {
+      return { tx: null, error: error }
+    }
+  }
+
+  const collectOwnerRewards = async (challengeId: string) => {
+    try {
+      if (!justDoItContract) return null
+      const estimatedGas = await justDoItContract.estimateGas.collectOwnerRewards(
+        challengeId,
+      )
+      const tx = await justDoItContract?.collectOwnerRewards(challengeId, {
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
+      return { tx: tx, error: null }
+    } catch (error) {
+      return { tx: null, error: error }
+    }
+  }
+
+  const collectSupporterRewards = async (challengeId: string) => {
+    try {
+      if (!justDoItContract) return null
+      const estimatedGas = await justDoItContract.estimateGas.collectSupporterRewards(
+        challengeId,
+      )
+      const tx = await justDoItContract?.collectSupporterRewards(challengeId, {
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
+      return { tx: tx, error: null }
+    } catch (error) {
+      return { tx: null, error: error }
+    }
+  }
+
   return {
     addChallenge,
     supportChallenge,
     ownerReportResult,
     supporterReportResult,
+    getOwnerRewards,
+    getSupporterRewards,
+    collectOwnerRewards,
+    collectSupporterRewards,
   }
 }

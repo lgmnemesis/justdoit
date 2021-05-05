@@ -1,6 +1,14 @@
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { formatEther } from '@ethersproject/units'
-import { ChevronDown, ChevronUp, Coffee, Flag, Anchor } from 'react-feather'
+import {
+  ChevronDown,
+  ChevronUp,
+  Coffee,
+  Flag,
+  Anchor,
+  Award,
+  Share2,
+} from 'react-feather'
 import { Challenge, ChallengeResult } from '../../constants'
 import { TYPE } from '../../theme'
 import {
@@ -16,6 +24,8 @@ import {
   PinkColor,
   Spacing,
   ChallengeButtonContainer,
+  ClaimButton,
+  ShareButton,
 } from './styles'
 import ChallengeDetails from './ChallengeDetails'
 import SupportChallenge from '../SupportChallenge'
@@ -23,6 +33,7 @@ import VoteOnChallenge from '../VoteOnChallenge'
 import { oneDayInSeconds, secondsToHm } from '../../utils'
 import { useBlockTimestamp } from '../../hooks/User'
 import { useInformationBar } from '../../hooks/User'
+import ClaimTokens from '../ClaimTokens'
 
 enum ButtonOptionsEnum {
   InitialState,
@@ -45,6 +56,9 @@ export default function DisplayChallenge({
 }) {
   const [details, setDetails] = useState(false)
   const [reportingTimeLeft, setReportingTimeLeft] = useState('')
+  const [isClaimModalOpen, setIsClaimModalOpen] = useState(false)
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const [finalResult, setFinalResult] = useState(false)
   const [modalStatus, setModalStatus] = useState({
     isOpen: false,
     actionDone: false,
@@ -70,6 +84,21 @@ export default function DisplayChallenge({
   )
 
   const isSupporting = supportedAmount !== '0.0'
+
+  const canClaimTokens = useMemo(() => {
+    return (
+      buttonOption === ButtonOptionsEnum.challengeDone &&
+      (challenge?.owner === account || isSupporting)
+    )
+  }, [account, buttonOption, challenge?.owner, isSupporting])
+
+  const shareChallenge = () => {
+    setIsShareModalOpen(true)
+  }
+
+  const claimTokens = () => {
+    setIsClaimModalOpen(true)
+  }
 
   const toggleDetails = () => {
     setDetails((d) => !d)
@@ -103,7 +132,7 @@ export default function DisplayChallenge({
     }
   }
 
-  const calcTimeLeftForReportingAndVoting = useCallback(() => {
+  useEffect(() => {
     const deadline = challenge.deadline?.toNumber()
     if (!(blockTimestamp && deadline)) return
     const ownerReportingDeadline = deadline + oneDayInSeconds * 2
@@ -125,7 +154,24 @@ export default function DisplayChallenge({
       result = ''
     }
     setReportingTimeLeft(result)
-  }, [blockTimestamp, buttonOption, challenge.deadline])
+
+    const ownerResult = challenge.ownerResult
+    if (ownerResult === ChallengeResult.Success) {
+      const votedSuccess = challenge.votedSuccess ?? 0
+      const votedFailure = challenge.votedFailure ?? 0
+      const result = votedSuccess >= votedFailure
+      setFinalResult(result)
+    } else {
+      setFinalResult(false)
+    }
+  }, [
+    blockTimestamp,
+    buttonOption,
+    challenge.deadline,
+    challenge.ownerResult,
+    challenge.votedSuccess,
+    challenge.votedFailure,
+  ])
 
   useEffect(() => {
     const twoDays = 2 * oneDayInSeconds
@@ -201,7 +247,6 @@ export default function DisplayChallenge({
     } else {
       setButtonOption(ButtonOptionsEnum.supportChallenge)
     }
-    calcTimeLeftForReportingAndVoting()
   }, [
     challenge,
     challenge.owner,
@@ -210,7 +255,6 @@ export default function DisplayChallenge({
     challenge.ownerResult,
     account,
     blockTimestamp,
-    calcTimeLeftForReportingAndVoting,
   ])
 
   useEffect(() => {
@@ -272,9 +316,27 @@ export default function DisplayChallenge({
               buttonOption === ButtonOptionsEnum.challengeOnGoing ||
               buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
               buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
-                <TYPE.Yellow>{getButtonText()}</TYPE.Yellow>
+                <>
+                  <TYPE.Yellow>{getButtonText()}</TYPE.Yellow>
+                  <Spacing />
+                </>
               ) : (
-                <TYPE.Green>{getButtonText()}</TYPE.Green>
+                <>
+                  <TYPE.Green>{getButtonText()}</TYPE.Green>
+                  <Spacing />
+                  {buttonOption === ButtonOptionsEnum.challengeDone && (
+                    <ChallengeLine>
+                      <LightColor>Final Result</LightColor>
+                      <PinkColor>
+                        {finalResult ? (
+                          <TYPE.Green>Success</TYPE.Green>
+                        ) : (
+                          <TYPE.Red>Failure</TYPE.Red>
+                        )}
+                      </PinkColor>
+                    </ChallengeLine>
+                  )}
+                </>
               )
             ) : (
               <>
@@ -288,6 +350,7 @@ export default function DisplayChallenge({
                     </ChallengeButton>
                   </TYPE.MediumHeader>
                 </ChallengeButtonContainer>
+                <Spacing />
                 {buttonOption === ButtonOptionsEnum.submitReport ||
                 buttonOption === ButtonOptionsEnum.castYourVote ? (
                   <ChallengeLine>
@@ -301,7 +364,6 @@ export default function DisplayChallenge({
                 ) : null}
               </>
             ))}
-          <Spacing />
           <ChallengeLine>
             <LightColor>Deadline</LightColor>
             {deadline}
@@ -322,7 +384,15 @@ export default function DisplayChallenge({
           )}
           <BorderLine />
           <ChallengeLine>
-            <PinkColor></PinkColor>
+            {canClaimTokens ? (
+              <ClaimButton onClick={claimTokens}>
+                <Award /> Claim
+              </ClaimButton>
+            ) : (
+              <ShareButton onClick={shareChallenge}>
+                <Share2 />
+              </ShareButton>
+            )}
             <LightColor>
               <DetailButton onClick={toggleDetails}>
                 {details ? 'Hide' : 'Details'}{' '}
@@ -347,6 +417,23 @@ export default function DisplayChallenge({
           challenge={challenge}
           isOwner={challenge.owner === account}
           isOpenModal={modalStatus?.isOpen}
+          setModalStatus={setModalStatus}
+        />
+      )}
+      {canClaimTokens && (
+        <ClaimTokens
+          challenge={challenge}
+          isOwner={challenge.owner === account}
+          account={account}
+          isOpenModal={isClaimModalOpen}
+          setModalStatus={setIsClaimModalOpen}
+        />
+      )}
+      {!canClaimTokens && (
+        <VoteOnChallenge
+          challenge={challenge}
+          isOwner={challenge.owner === account}
+          isOpenModal={isShareModalOpen}
           setModalStatus={setModalStatus}
         />
       )}

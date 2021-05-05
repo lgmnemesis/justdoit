@@ -18,7 +18,6 @@ import Loader from '../Loader'
 const ModalWrapper = styled(IonModal)`
   .modal-wrapper {
     --background: ${({ theme }) => theme.bg2};
-    max-width: 400px;
   }
 `
 
