@@ -142,20 +142,20 @@ export default function VoteOnChallenge({
       const file = report[0]
       const ipfsPath = await addData(file.arrayBuffer)
       if (!ipfsPath) {
-        setIsFetching(true)
+        setIsFetching(false)
         setError(
           'Can not store the image you selected. Not submiting your Report',
         )
         return
       }
-      path = ipfsPath
+      path = `${file.type}${ipfsPath}`
     }
     setTimeout(async () => {
       const tx =
         challenge?.id &&
         (isOwner
           ? await ownerReportResult(challenge.id, result, path)
-          : await supporterReportResult(challenge.id, result, path))
+          : await supporterReportResult(challenge.id, result))
       console.log('tx:', tx)
       const error = tx && handleTxErrors(tx.error, isOwner)
       error && setError(error)

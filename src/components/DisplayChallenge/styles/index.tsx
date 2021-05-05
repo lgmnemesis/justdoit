@@ -49,6 +49,10 @@ export const ChallengeLine = styled.div`
   padding: 10px 0;
 `
 
+export const ChallengeNoButtonContainer = styled.div`
+  display: flex;
+`
+
 export const ChallengeButtonContainer = styled.div`
   display: flex;
   align-items: center;

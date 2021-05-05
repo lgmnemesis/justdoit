@@ -88,19 +88,16 @@ export function useJustDoItContractService() {
   const supporterReportResult = async (
     challengeId: string,
     result: ChallengeResult,
-    path: string,
   ) => {
     try {
       if (!justDoItContract) return null
       const estimatedGas = await justDoItContract.estimateGas.supporterReportResult(
         challengeId,
         result,
-        path,
       )
       const tx = await justDoItContract?.supporterReportResult(
         challengeId,
         result,
-        path,
         {
           gasLimit: calculateGasMargin(estimatedGas),
         },

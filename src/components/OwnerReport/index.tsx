@@ -200,6 +200,18 @@ export default function OwnerReport({
           </ImportantText>
         </ItemPlaceHolder>
       )}
+      {!isOwner && isOwnerReported && !(files && files.length > 0) && (
+        <ItemPlaceHolder>
+          <InfoText>
+            <LightColor>Please note,</LightColor>
+          </InfoText>
+          <ImportantText>
+            <LightColor>
+              Challenger reported on success but provided no indication photo.
+            </LightColor>
+          </ImportantText>
+        </ItemPlaceHolder>
+      )}
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { formatEther } from '@ethersproject/units'
 import { ChevronDown, ChevronUp, Coffee, Flag, Anchor } from 'react-feather'
 import { Challenge, ChallengeResult } from '../../constants'
@@ -20,7 +20,7 @@ import {
 import ChallengeDetails from './ChallengeDetails'
 import SupportChallenge from '../SupportChallenge'
 import VoteOnChallenge from '../VoteOnChallenge'
-import { oneDayInSeconds } from '../../utils'
+import { oneDayInSeconds, secondsToHm } from '../../utils'
 import { useBlockTimestamp } from '../../hooks/User'
 import { useInformationBar } from '../../hooks/User'
 
@@ -44,6 +44,7 @@ export default function DisplayChallenge({
   account: string | undefined | null
 }) {
   const [details, setDetails] = useState(false)
+  const [reportingTimeLeft, setReportingTimeLeft] = useState('')
   const [modalStatus, setModalStatus] = useState({
     isOpen: false,
     actionDone: false,
@@ -101,6 +102,30 @@ export default function DisplayChallenge({
         return ButtonOptionsEnum.InitialState
     }
   }
+
+  const calcTimeLeftForReportingAndVoting = useCallback(() => {
+    const deadline = challenge.deadline?.toNumber()
+    if (!(blockTimestamp && deadline)) return
+    const ownerReportingDeadline = deadline + oneDayInSeconds * 2
+    const supporterVotingDeadline = deadline + oneDayInSeconds * 7
+    const ownerTimeLeft = ownerReportingDeadline - blockTimestamp
+    const supporterTimeLeft = supporterVotingDeadline - blockTimestamp
+    const timeleft =
+      buttonOption === ButtonOptionsEnum.waitingForSupporters ||
+      buttonOption === ButtonOptionsEnum.castYourVote
+        ? supporterTimeLeft
+        : ownerTimeLeft
+    const days = Math.floor(timeleft / oneDayInSeconds)
+    let result
+    if (days > 1) {
+      result = `${days} days`
+    } else if (timeleft > 0) {
+      result = secondsToHm(timeleft)
+    } else {
+      result = ''
+    }
+    setReportingTimeLeft(result)
+  }, [blockTimestamp, buttonOption, challenge.deadline])
 
   useEffect(() => {
     const twoDays = 2 * oneDayInSeconds
@@ -176,6 +201,7 @@ export default function DisplayChallenge({
     } else {
       setButtonOption(ButtonOptionsEnum.supportChallenge)
     }
+    calcTimeLeftForReportingAndVoting()
   }, [
     challenge,
     challenge.owner,
@@ -184,6 +210,7 @@ export default function DisplayChallenge({
     challenge.ownerResult,
     account,
     blockTimestamp,
+    calcTimeLeftForReportingAndVoting,
   ])
 
   useEffect(() => {
@@ -219,32 +246,61 @@ export default function DisplayChallenge({
             <TYPE.LargeHeader>{challenge.name}</TYPE.LargeHeader>
           </ChallengeHeader>
           <Spacing />
-          <ChallengeButtonContainer>
-            <TYPE.MediumHeader>
-              {buttonOption !== ButtonOptionsEnum.InitialState &&
-                (buttonOption === ButtonOptionsEnum.waitingForOwner ||
-                buttonOption === ButtonOptionsEnum.waitingForSupporters ? (
-                  <TYPE.Blue>{getButtonText()}</TYPE.Blue>
-                ) : buttonOption === ButtonOptionsEnum.challengeDone ||
-                  buttonOption === ButtonOptionsEnum.challengeOnGoing ||
-                  buttonOption ===
-                    ButtonOptionsEnum.challengeOverApproaching ? (
-                  buttonOption ===
-                  ButtonOptionsEnum.challengeOverApproaching ? (
-                    <TYPE.Yellow>{getButtonText()}</TYPE.Yellow>
-                  ) : (
-                    <TYPE.Green>{getButtonText()}</TYPE.Green>
-                  )
-                ) : (
-                  <ChallengeButton
-                    disabled={modalStatus?.actionDone}
-                    onClick={handleClick}
-                  >
-                    {modalStatus?.actionDone ? 'Pending' : getButtonText()}
-                  </ChallengeButton>
-                ))}
-            </TYPE.MediumHeader>
-          </ChallengeButtonContainer>
+
+          {buttonOption !== ButtonOptionsEnum.InitialState &&
+            ((buttonOption === ButtonOptionsEnum.waitingForOwner ||
+              buttonOption === ButtonOptionsEnum.waitingForSupporters) &&
+            reportingTimeLeft !== '' ? (
+              <>
+                <ChallengeLine>
+                  <TYPE.Yellow>
+                    {buttonOption === ButtonOptionsEnum.waitingForOwner
+                      ? 'Waiting on challenger report...'
+                      : 'Waiting on all supporters votes...'}
+                  </TYPE.Yellow>
+                </ChallengeLine>
+                <ChallengeLine>
+                  <LightColor>
+                    {buttonOption === ButtonOptionsEnum.waitingForOwner
+                      ? 'Reporting time remaining'
+                      : 'Voting time remaining'}
+                  </LightColor>
+                  <PinkColor> {reportingTimeLeft}</PinkColor>
+                </ChallengeLine>
+              </>
+            ) : buttonOption === ButtonOptionsEnum.challengeDone ||
+              buttonOption === ButtonOptionsEnum.challengeOnGoing ||
+              buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
+              buttonOption === ButtonOptionsEnum.challengeOverApproaching ? (
+                <TYPE.Yellow>{getButtonText()}</TYPE.Yellow>
+              ) : (
+                <TYPE.Green>{getButtonText()}</TYPE.Green>
+              )
+            ) : (
+              <>
+                <ChallengeButtonContainer>
+                  <TYPE.MediumHeader>
+                    <ChallengeButton
+                      disabled={modalStatus?.actionDone}
+                      onClick={handleClick}
+                    >
+                      {modalStatus?.actionDone ? 'Pending' : getButtonText()}
+                    </ChallengeButton>
+                  </TYPE.MediumHeader>
+                </ChallengeButtonContainer>
+                {buttonOption === ButtonOptionsEnum.submitReport ||
+                buttonOption === ButtonOptionsEnum.castYourVote ? (
+                  <ChallengeLine>
+                    <LightColor>
+                      {buttonOption === ButtonOptionsEnum.submitReport
+                        ? 'Reporting time remaining'
+                        : 'Voting time remaining'}
+                    </LightColor>
+                    <PinkColor> {reportingTimeLeft}</PinkColor>
+                  </ChallengeLine>
+                ) : null}
+              </>
+            ))}
           <Spacing />
           <ChallengeLine>
             <LightColor>Deadline</LightColor>
@@ -289,7 +345,7 @@ export default function DisplayChallenge({
         buttonOption === ButtonOptionsEnum.submitReport) && (
         <VoteOnChallenge
           challenge={challenge}
-          isOwner={true || challenge.owner === account}
+          isOwner={challenge.owner === account}
           isOpenModal={modalStatus?.isOpen}
           setModalStatus={setModalStatus}
         />
