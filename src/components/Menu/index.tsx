@@ -3,8 +3,9 @@ import { MoreVertical } from 'react-feather'
 import { StyledMenuButton } from '../Button'
 import styled from 'styled-components'
 import { IonPopover } from '@ionic/react'
-import { Info, Settings } from 'react-feather'
+import { Home, HelpCircle, GitHub } from 'react-feather'
 import { NavLink } from 'react-router-dom'
+import { GITHUB_URL } from '../../constants'
 
 const MenuContainer = styled.span`
   background-color: ${({ theme }) => theme.bg3};
@@ -39,18 +40,29 @@ const dismissMenu = () => {
   setShowPopoverRef({ showPopover: false, event: undefined })
 }
 
+const openExternalLink = () => {
+  try {
+    setTimeout(() => {
+      window.open(GITHUB_URL)
+    }, 0)
+  } catch (error) {}
+}
+
 const MenuContent = () => {
   return (
     <>
       <MenuContainer>
-        <MenuItem id={'menu-setting'} to={'/setting'} onClick={dismissMenu}>
-          <Settings size={14} />
-          Setting
+        <MenuItem id={'menu-home'} to={'/home'} onClick={dismissMenu}>
+          <Home size={14} />
+          Home
         </MenuItem>
-
-        <MenuItem id={'menu-about'} to={'/about'}>
-          <Info size={14} />
-          About
+        <MenuItem id={'menu-help'} to={'/help'} onClick={dismissMenu}>
+          <HelpCircle size={14} />
+          Help
+        </MenuItem>
+        <MenuItem id={'menu-code'} to={''} onClick={openExternalLink}>
+          <GitHub size={14} />
+          Code
         </MenuItem>
       </MenuContainer>
     </>

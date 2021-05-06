@@ -137,6 +137,8 @@ export interface WalletInfo {
   mobileOnly?: true
 }
 
+export const GITHUB_URL = 'https://github.com/lgmnemesis/justdoit-core'
+
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   INJECTED: {
     connector: injected,

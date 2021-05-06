@@ -36,7 +36,7 @@ export default function HowItWorks() {
             <li>Fail to complete and lose your staking.</li>
           </TYPE.Body>
           <ReadMore>
-            <ExternalLink href={'/howitworks'}>Read more</ExternalLink>
+            <ExternalLink href={'/help'}>Read more</ExternalLink>
           </ReadMore>
         </How>
       </HowContainer>

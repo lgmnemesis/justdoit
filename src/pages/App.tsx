@@ -5,7 +5,7 @@ import Header from '../components/Header'
 import InformationBar from '../components/InformationBar'
 import Web3ReactManager from '../components/Web3ReactManager'
 import HomePage from './Home'
-import HowItWorksPage from './HowItWorks'
+import HelpPage from './Help'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -51,7 +51,7 @@ export default function App() {
             <Switch>
               <Route exact path="/" component={HomePage} />
               <Route exact path="/home" component={HomePage} />
-              <Route exact path="/howitworks" component={HowItWorksPage} />
+              <Route exact path="/help" component={HelpPage} />
               <Route path="/">
                 <Redirect to="/" />
               </Route>
