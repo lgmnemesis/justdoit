@@ -22,8 +22,11 @@ import {
   Spacing,
 } from '../DisplayChallenge/styles'
 import { TYPE } from '../../theme'
-import { ButtonLight, ButtonPrimary } from '../Button'
-import { SpaceX } from '../NewChallenge/styled'
+import { ButtonSecondary } from '../Button'
+import Loader from '../Loader'
+import { useActiveWeb3React } from '../../hooks'
+import { JDI_TOKEN_ADDRESSES } from '../../constants/addresses'
+import { useClaimedTokens } from '../../hooks/User'
 
 const ModalWrapper = styled(IonModal)`
   .modal-wrapper {
@@ -88,6 +91,10 @@ const LineDiv = styled.div`
   opacity: 0.4;
 `
 
+const Spinner = styled(Loader)`
+  margin: 0 10px;
+`
+
 export default function ClaimTokens({
   challenge,
   isOwner,
@@ -110,6 +117,8 @@ export default function ClaimTokens({
     collectOwnerRewards,
     collectSupporterRewards,
   } = useJustDoItContractService()
+  const { chainId } = useActiveWeb3React()
+  const { claimedTokens, markClaimedTokens } = useClaimedTokens()
 
   const initialStake = useMemo(
     () => formatEther(challenge?.amountStaked ? challenge.amountStaked : 0),
@@ -141,12 +150,24 @@ export default function ClaimTokens({
     rewards,
   ])
 
+  const jdiTokenAddress = useMemo(
+    () => (chainId ? JDI_TOKEN_ADDRESSES[chainId] : ''),
+    [chainId],
+  )
+
+  const areClaimedTokens = useMemo(
+    () => claimedTokens && claimedTokens[`${challenge?.id}${account}`],
+    [account, challenge?.id, claimedTokens],
+  )
+
   const closeModal = () => {
     reset()
     setModalStatus(false)
   }
 
-  const reset = () => {}
+  const reset = () => {
+    setError('')
+  }
 
   const getRewards = useCallback(async () => {
     if (rewards || isFetching) return
@@ -157,7 +178,6 @@ export default function ClaimTokens({
       (isOwner
         ? await getOwnerRewards(challenge.id)
         : await getSupporterRewards(challenge.id))
-    console.log('tx:', tx)
     const error = tx && handleTxErrors(tx.error, isOwner)
     error && setError(error)
     tx && setRewards(tx.tx)
@@ -179,11 +199,20 @@ export default function ClaimTokens({
       (isOwner
         ? await collectOwnerRewards(challenge.id)
         : await collectSupporterRewards(challenge.id))
-    console.log('tx:', tx)
     const error = tx && handleTxErrors(tx.error, isOwner)
     error && setError(error)
+    if (!error || error === 'Already claimed rewards') {
+      challenge?.id && account && markClaimedTokens(challenge.id, account)
+    }
     setIsFetching(false)
-  }, [isOwner, challenge.id, collectOwnerRewards, collectSupporterRewards])
+  }, [
+    isOwner,
+    challenge.id,
+    collectOwnerRewards,
+    collectSupporterRewards,
+    account,
+    markClaimedTokens,
+  ])
 
   useEffect(() => {
     isOpenModal && getRewards()
@@ -245,16 +274,6 @@ export default function ClaimTokens({
                   <PinkColor>{tokenRewards}</PinkColor>
                 </ChallengeEndLine>
               </ChallengeLine>
-
-              <Spacing />
-              <ChallengeLine>
-                <ButtonLight
-                  disabled={tokenRewards === '0.0'}
-                  onClick={() => handleWithdraw()}
-                >
-                  Claim Tokens
-                </ButtonLight>
-              </ChallengeLine>
             </>
           )}
           {!isOwner && (
@@ -283,18 +302,29 @@ export default function ClaimTokens({
                   <PinkColor>{tokenRewards}</PinkColor>
                 </ChallengeEndLine>
               </ChallengeLine>
-
-              <Spacing />
-              <ChallengeLine>
-                <ButtonLight
-                  disabled={tokenRewards === '0.0'}
-                  onClick={() => handleWithdraw()}
-                >
-                  Claim Tokens
-                </ButtonLight>
-              </ChallengeLine>
             </>
           )}
+          <Spacing />
+          <ChallengeLine>
+            <ButtonSecondary
+              disabled={
+                areClaimedTokens || isFetching || tokenRewards === '0.0'
+              }
+              onClick={() => handleWithdraw()}
+            >
+              {tokenRewards === '0.0'
+                ? 'No Tokens to Claim'
+                : areClaimedTokens
+                ? 'Tokens Are in Your Wallet'
+                : 'Claim Tokens'}
+              {isFetching && <Spinner />}
+            </ButtonSecondary>
+          </ChallengeLine>
+          <Spacing />
+          <ChallengeLine>
+            <TYPE.Blue>JDI token contract address</TYPE.Blue>
+          </ChallengeLine>
+          <TYPE.Small style={{ fontWeight: 200 }}>{jdiTokenAddress}</TYPE.Small>
         </BodyInner>
       </BodyWrapper>
     </ModalWrapper>

@@ -31,7 +31,7 @@ import ChallengeDetails from './ChallengeDetails'
 import SupportChallenge from '../SupportChallenge'
 import VoteOnChallenge from '../VoteOnChallenge'
 import { oneDayInSeconds, secondsToHm } from '../../utils'
-import { useBlockTimestamp } from '../../hooks/User'
+import { useBlockTimestamp, useClaimedTokens } from '../../hooks/User'
 import { useInformationBar } from '../../hooks/User'
 import ClaimTokens from '../ClaimTokens'
 
@@ -68,6 +68,8 @@ export default function DisplayChallenge({
   )
   const { blockTimestamp } = useBlockTimestamp()
   const { informationBar } = useInformationBar()
+  const { claimedTokens } = useClaimedTokens()
+
   const timestamp = (challenge.deadline?.toNumber() || 1) * 1000
   const deadline = useMemo(() => new Date(timestamp).toDateString(), [
     timestamp,
@@ -91,6 +93,11 @@ export default function DisplayChallenge({
       (challenge?.owner === account || isSupporting)
     )
   }, [account, buttonOption, challenge?.owner, isSupporting])
+
+  const areClaimedTokens = useMemo(
+    () => claimedTokens && claimedTokens[`${challenge?.id}${account}`],
+    [account, challenge?.id, claimedTokens],
+  )
 
   const shareChallenge = () => {
     setIsShareModalOpen(true)
@@ -385,8 +392,11 @@ export default function DisplayChallenge({
           <BorderLine />
           <ChallengeLine>
             {canClaimTokens ? (
-              <ClaimButton onClick={claimTokens}>
-                <Award /> Claim
+              <ClaimButton
+                claimed={areClaimedTokens || false}
+                onClick={claimTokens}
+              >
+                <Award /> {areClaimedTokens ? 'Claimed' : 'Claim'}
               </ClaimButton>
             ) : (
               <ShareButton onClick={shareChallenge}>

@@ -108,8 +108,14 @@ export interface InformationBar {
   closeOnTimeout?: number
 }
 
+export interface ClaimedTokens {
+  // key: ${challengeId}${account}
+  [key: string]: boolean
+}
+
 export const NetworkContextName = 'NETWORK'
 export const PERSIST_IS_DARK_MODE = 'darkmode'
+export const PERSIST_CLAIMED_TOKENS = 'claimedtokens'
 
 export const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',

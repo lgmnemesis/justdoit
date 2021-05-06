@@ -1,5 +1,9 @@
 import { useCallback } from 'react'
-import { ChallengeActionType, InformationBar } from '../../constants'
+import {
+  ChallengeActionType,
+  ClaimedTokens,
+  InformationBar,
+} from '../../constants'
 import { GlobalStateInterface, useGlobalState } from '../../state/global'
 
 export function useIsDarkMode() {
@@ -163,4 +167,32 @@ export function useBlockTimestamp() {
 
   const blockTimestamp = state.blockTimestamp
   return { blockTimestamp, setBlockTimestamp }
+}
+
+export function useClaimedTokens() {
+  const { state, setState } = useGlobalState()
+
+  const markClaimedTokens = useCallback(
+    (challengeId: string, account: string) => {
+      const claimed: ClaimedTokens = { [`${challengeId}${account}`]: true }
+      setState((current) => ({
+        ...current,
+        claimedTokens: { ...current.claimedTokens, ...claimed },
+      }))
+    },
+    [setState],
+  )
+
+  const setClaimedTokens = useCallback(
+    (claimed: ClaimedTokens) => {
+      setState((current) => ({
+        ...current,
+        claimedTokens: { ...current.claimedTokens, ...claimed },
+      }))
+    },
+    [setState],
+  )
+
+  const claimedTokens = state.claimedTokens
+  return { claimedTokens, markClaimedTokens, setClaimedTokens }
 }

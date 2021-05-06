@@ -93,7 +93,6 @@ export default function SupportChallenge({
       setTimeout(async () => {
         const tx =
           challenge?.id && (await supportChallenge(challenge.id, amount))
-        console.log('tx:', tx)
         const error = tx && handleTxErrors(tx.error)
         error && setError(error)
         tx && !error && supportChallengeDone()

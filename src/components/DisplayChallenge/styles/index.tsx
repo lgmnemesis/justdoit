@@ -55,10 +55,11 @@ export const ShareButton = styled.div`
   color: ${({ theme }) => theme.nice1};
 `
 
-export const ClaimButton = styled(ButtonSecondary)`
+export const ClaimButton = styled(ButtonSecondary)<{ claimed: boolean }>`
   padding: 8px;
   width: 80px;
   border-radius: 10px;
+  color: ${({ theme, claimed }) => claimed && theme.green1};
 `
 
 export const ChallengeNoButtonContainer = styled.div`

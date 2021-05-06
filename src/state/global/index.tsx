@@ -8,6 +8,7 @@ import {
 } from 'react'
 import {
   Challenge,
+  ClaimedTokens,
   InformationBar,
   OwnerReportResult,
   SupportChallenge,
@@ -27,6 +28,7 @@ export interface GlobalStateInterface {
   informationBar: InformationBar
   timeInSeconds: number
   blockTimestamp: number
+  claimedTokens: ClaimedTokens
 }
 
 const GlobalStateContext = createContext({

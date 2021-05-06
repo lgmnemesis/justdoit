@@ -155,7 +155,6 @@ export default function VoteOnChallenge({
         (isOwner
           ? await ownerReportResult(challenge.id, result, path)
           : await supporterReportResult(challenge.id, result))
-      console.log('tx:', tx)
       const error = tx && handleTxErrors(tx.error, isOwner)
       error && setError(error)
       tx && !error && voteOnChallengeDone()

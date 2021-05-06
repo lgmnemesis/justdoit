@@ -133,6 +133,9 @@ export function handleTxErrors(error: any, isOwner?: boolean): string | null {
         ? 'Reporting time window is not met'
         : 'Voting time window is not met'
     }
+    if (message?.match('No more rewards')) {
+      return 'Already claimed rewards'
+    }
     return DEFAULT_ERROR
   }
   return null
