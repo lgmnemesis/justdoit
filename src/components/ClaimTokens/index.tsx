@@ -1,12 +1,5 @@
 import { IonModal } from '@ionic/react'
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { X } from 'react-feather'
 import styled from 'styled-components'
 import { Challenge } from '../../constants'
@@ -118,7 +111,7 @@ export default function ClaimTokens({
     collectSupporterRewards,
   } = useJustDoItContractService()
   const { chainId } = useActiveWeb3React()
-  const { claimedTokens, markClaimedTokens } = useClaimedTokens()
+  const { markClaimedTokens, areClaimedTokens } = useClaimedTokens()
 
   const initialStake = useMemo(
     () => formatEther(challenge?.amountStaked ? challenge.amountStaked : 0),
@@ -155,9 +148,9 @@ export default function ClaimTokens({
     [chainId],
   )
 
-  const areClaimedTokens = useMemo(
-    () => claimedTokens && claimedTokens[`${challenge?.id}${account}`],
-    [account, challenge?.id, claimedTokens],
+  const alreadyClaimedTokens = useMemo(
+    () => challenge?.id && areClaimedTokens(challenge.id),
+    [challenge?.id, areClaimedTokens],
   )
 
   const closeModal = () => {
@@ -170,7 +163,8 @@ export default function ClaimTokens({
   }
 
   const getRewards = useCallback(async () => {
-    if (rewards || isFetching) return
+    if (rewards) return
+    console.log('moshe1')
     setIsFetching(true)
     setError('')
     const tx =
@@ -178,18 +172,12 @@ export default function ClaimTokens({
       (isOwner
         ? await getOwnerRewards(challenge.id)
         : await getSupporterRewards(challenge.id))
-    const error = tx && handleTxErrors(tx.error, isOwner)
-    error && setError(error)
+    const err = tx && handleTxErrors(tx.error, isOwner)
+    err && setError(err)
+    console.log('tx:', tx)
     tx && setRewards(tx.tx)
     setIsFetching(false)
-  }, [
-    challenge.id,
-    getOwnerRewards,
-    getSupporterRewards,
-    isOwner,
-    rewards,
-    isFetching,
-  ])
+  }, [challenge.id, getOwnerRewards, getSupporterRewards, isOwner, rewards])
 
   const handleWithdraw = useCallback(async () => {
     setIsFetching(true)
@@ -199,10 +187,10 @@ export default function ClaimTokens({
       (isOwner
         ? await collectOwnerRewards(challenge.id)
         : await collectSupporterRewards(challenge.id))
-    const error = tx && handleTxErrors(tx.error, isOwner)
-    error && setError(error)
-    if (!error || error === 'Already claimed rewards') {
-      challenge?.id && account && markClaimedTokens(challenge.id, account)
+    const err = tx && handleTxErrors(tx.error, isOwner)
+    err && setError(err)
+    if (!err || err === 'Already claimed rewards') {
+      challenge?.id && account && markClaimedTokens(challenge.id)
     }
     setIsFetching(false)
   }, [
@@ -214,16 +202,13 @@ export default function ClaimTokens({
     markClaimedTokens,
   ])
 
-  useEffect(() => {
-    isOpenModal && getRewards()
-  }, [isOpenModal, getRewards])
-
   return (
     <ModalWrapper
       cssClass="ion-modal-fixed"
       mode="ios"
       swipeToClose={false}
       isOpen={isOpenModal}
+      onDidPresent={getRewards}
       onDidDismiss={closeModal}
     >
       <ModalHeader>
@@ -308,13 +293,13 @@ export default function ClaimTokens({
           <ChallengeLine>
             <ButtonSecondary
               disabled={
-                areClaimedTokens || isFetching || tokenRewards === '0.0'
+                alreadyClaimedTokens || isFetching || tokenRewards === '0.0'
               }
               onClick={() => handleWithdraw()}
             >
               {tokenRewards === '0.0'
                 ? 'No Tokens to Claim'
-                : areClaimedTokens
+                : alreadyClaimedTokens
                 ? 'Tokens Are in Your Wallet'
                 : 'Claim Tokens'}
               {isFetching && <Spinner />}

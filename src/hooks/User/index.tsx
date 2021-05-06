@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { useActiveWeb3React } from '..'
 import {
   ChallengeActionType,
   ClaimedTokens,
@@ -171,16 +172,29 @@ export function useBlockTimestamp() {
 
 export function useClaimedTokens() {
   const { state, setState } = useGlobalState()
+  const { account, chainId } = useActiveWeb3React()
+
+  const areClaimedTokens = useCallback(
+    (challengeId: string) => {
+      return (
+        state?.claimedTokens &&
+        state.claimedTokens[`${challengeId}${account}${chainId}`]
+      )
+    },
+    [state.claimedTokens, account, chainId],
+  )
 
   const markClaimedTokens = useCallback(
-    (challengeId: string, account: string) => {
-      const claimed: ClaimedTokens = { [`${challengeId}${account}`]: true }
+    (challengeId: string) => {
+      const claimed: ClaimedTokens = {
+        [`${challengeId}${account}${chainId}`]: true,
+      }
       setState((current) => ({
         ...current,
         claimedTokens: { ...current.claimedTokens, ...claimed },
       }))
     },
-    [setState],
+    [setState, account, chainId],
   )
 
   const setClaimedTokens = useCallback(
@@ -194,5 +208,10 @@ export function useClaimedTokens() {
   )
 
   const claimedTokens = state.claimedTokens
-  return { claimedTokens, markClaimedTokens, setClaimedTokens }
+  return {
+    claimedTokens,
+    markClaimedTokens,
+    areClaimedTokens,
+    setClaimedTokens,
+  }
 }

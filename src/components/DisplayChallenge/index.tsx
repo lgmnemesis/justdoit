@@ -68,7 +68,7 @@ export default function DisplayChallenge({
   )
   const { blockTimestamp } = useBlockTimestamp()
   const { informationBar } = useInformationBar()
-  const { claimedTokens } = useClaimedTokens()
+  const { areClaimedTokens } = useClaimedTokens()
 
   const timestamp = (challenge.deadline?.toNumber() || 1) * 1000
   const deadline = useMemo(() => new Date(timestamp).toDateString(), [
@@ -94,9 +94,9 @@ export default function DisplayChallenge({
     )
   }, [account, buttonOption, challenge?.owner, isSupporting])
 
-  const areClaimedTokens = useMemo(
-    () => claimedTokens && claimedTokens[`${challenge?.id}${account}`],
-    [account, challenge?.id, claimedTokens],
+  const alreadyClaimedTokens = useMemo(
+    () => challenge?.id && areClaimedTokens(challenge.id),
+    [challenge?.id, areClaimedTokens],
   )
 
   const shareChallenge = () => {
@@ -393,10 +393,10 @@ export default function DisplayChallenge({
           <ChallengeLine>
             {canClaimTokens ? (
               <ClaimButton
-                claimed={areClaimedTokens || false}
+                claimed={alreadyClaimedTokens || false}
                 onClick={claimTokens}
               >
-                <Award /> {areClaimedTokens ? 'Claimed' : 'Claim'}
+                <Award /> {alreadyClaimedTokens ? 'Claimed' : 'Claim'}
               </ClaimButton>
             ) : (
               <ShareButton onClick={shareChallenge}>

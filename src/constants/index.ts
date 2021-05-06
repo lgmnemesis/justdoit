@@ -109,7 +109,7 @@ export interface InformationBar {
 }
 
 export interface ClaimedTokens {
-  // key: ${challengeId}${account}
+  // key: ${challengeId}${account}${network}
   [key: string]: boolean
 }
 

@@ -136,6 +136,13 @@ export function handleTxErrors(error: any, isOwner?: boolean): string | null {
     if (message?.match('No more rewards')) {
       return 'Already claimed rewards'
     }
+    // Generic VM revert exception
+    if (message?.match('VM Exception while processing transaction:')) {
+      const msg = message.split(':')
+      return msg.length > 0
+        ? msg[1].replace('revert', '').trim()
+        : DEFAULT_ERROR
+    }
     return DEFAULT_ERROR
   }
   return null
