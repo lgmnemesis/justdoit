@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { IonModal } from '@ionic/react'
 import { X } from 'react-feather'
@@ -86,44 +86,48 @@ export default function SupportChallenge({
   const { supportChallenge } = useJustDoItContractService()
   const { dispatchInformationBar } = useInformationBar()
 
-  const handleAllIsDone = (isDone: boolean) => {
-    if (isDone) {
-      setIsFetching(true)
-      setError('')
-      setTimeout(async () => {
+  const reset = useCallback(() => {
+    setIsFetching(false)
+    setError('')
+    setAmount('')
+  }, [])
+
+  const closeModalOnAction = useCallback(
+    (actionDone = false) => {
+      reset()
+      setModalStatus({ isOpen: false, actionDone })
+    },
+    [reset, setModalStatus],
+  )
+
+  const supportChallengeDone = useCallback(() => {
+    challenge?.id &&
+      dispatchInformationBar(challenge.id, ChallengeActionType.SUPPORT_CHALLEGE)
+    closeModalOnAction(true)
+  }, [challenge.id, closeModalOnAction, dispatchInformationBar])
+
+  const handleAllIsDone = useCallback(
+    async (isDone: boolean) => {
+      if (isDone) {
+        setIsFetching(true)
+        setError('')
         const tx =
           challenge?.id && (await supportChallenge(challenge.id, amount))
         const error = tx && handleTxErrors(tx.error)
         error && setError(error)
         tx && !error && supportChallengeDone()
         setIsFetching(false)
-      }, 0)
-    }
-  }
+      }
+    },
+    [amount, challenge.id, supportChallenge, supportChallengeDone],
+  )
 
-  const supportChallengeDone = () => {
-    challenge?.id &&
-      dispatchInformationBar(challenge.id, ChallengeActionType.SUPPORT_CHALLEGE)
-    closeModalOnAction(true)
-  }
-
-  const closeModalOnAction = (actionDone = false) => {
-    reset()
-    setModalStatus({ isOpen: false, actionDone })
-  }
-
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     reset()
     setModalStatus((current) => {
       return { isOpen: false, actionDone: current.actionDone }
     })
-  }
-
-  const reset = () => {
-    setIsFetching(false)
-    setError('')
-    setAmount('')
-  }
+  }, [reset, setModalStatus])
 
   return (
     <ModalWrapper

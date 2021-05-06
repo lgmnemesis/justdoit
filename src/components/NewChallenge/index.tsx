@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { IonSlide } from '@ionic/react'
 import { ChevronLeft } from 'react-feather'
 import DateTimePicker from '../DateTimePicker'
@@ -15,8 +15,12 @@ import {
   Button,
 } from './styled'
 import { useJustDoItContractService } from '../../services/JustDoItContractService'
-import { generateChallengeId, handleTxErrors } from '../../utils'
-import { useInformationBar } from '../../hooks/User'
+import {
+  generateChallengeId,
+  handleTxErrors,
+  oneDayInSeconds,
+} from '../../utils'
+import { useBlockTimestamp, useInformationBar } from '../../hooks/User'
 import { ChallengeActionType } from '../../constants'
 
 const slideOpts = {
@@ -33,73 +37,88 @@ enum TITLE {
 }
 let firstNextIndication = false
 
-const defaultDeadline = () => {
-  const date = new Date()
-  return new Date(date.setDate(date.getDate() + 2)) // 2 days from today
-}
-
 export default function NewChallenge() {
   const slidesRef: any = useRef(null)
   const [slidesIndex, setSlidesIndex] = useState(0)
   const [goalText, setGoalText] = useState('')
-  const [deadLine, setDeadLine] = useState<Date | null>(defaultDeadline())
-  const [minDate, setMinDate] = useState<Date | null>(null)
+  const [deadLine, setDeadLine] = useState<Date | null>()
   const [amount, setAmount] = useState('')
   const [isFetching, setIsFetching] = useState(false)
   const [error, setError] = useState('')
   const { dispatchInformationBar } = useInformationBar()
   const { addChallenge } = useJustDoItContractService()
+  const { blockTimestamp } = useBlockTimestamp()
 
-  const setSlidesDefaults = useCallback(async () => {
-    handleSlidesIndex()
-  }, [])
+  const defaultDeadline = useMemo(() => {
+    const timestamp = blockTimestamp
+      ? blockTimestamp * 1000
+      : new Date().getTime()
+    const twoDaysFromNow = timestamp + oneDayInSeconds * 2 * 1000
+    return new Date(twoDaysFromNow) // 2 days from today
+  }, [blockTimestamp])
 
-  const handleSlidesIndex = async () => {
+  const minDate = useMemo(() => defaultDeadline, [defaultDeadline])
+
+  const handleSlidesIndex = useCallback(async () => {
     setError('')
     const index = await slidesRef.current.getActiveIndex()
     setSlidesIndex(index)
-  }
+  }, [])
 
-  const slideToPrev = async () => {
+  const setSlidesDefaults = useCallback(async () => {
+    handleSlidesIndex()
+  }, [handleSlidesIndex])
+
+  const slideToPrev = useCallback(async () => {
     await slidesRef.current.slidePrev()
     handleSlidesIndex()
-  }
+  }, [handleSlidesIndex])
 
-  const slideToNext = async () => {
+  const slideToNext = useCallback(async () => {
     await slidesRef.current.slideNext()
     firstNextIndication = true
     handleSlidesIndex()
-  }
+  }, [handleSlidesIndex])
 
-  const handleAllIsDone = (isDone: boolean) => {
-    if (isDone) {
-      // Create a new challenge in contract
-      setIsFetching(true)
-      setError('')
-      setTimeout(async () => {
+  const challengeWasAdded = useCallback(
+    async (challengeId: string) => {
+      dispatchInformationBar(challengeId, ChallengeActionType.ADD_CHALLENGE)
+      setSlidesIndex(0)
+      setGoalText('')
+      setDeadLine(defaultDeadline)
+      setAmount('')
+      setIsFetching(false)
+      await slidesRef.current.slideTo(0, 0)
+      setSlidesDefaults()
+    },
+    [defaultDeadline, dispatchInformationBar, setSlidesDefaults],
+  )
+
+  const handleAllIsDone = useCallback(
+    async (isDone: boolean) => {
+      if (isDone) {
+        setIsFetching(true)
+        setError('')
+        const endTime = deadLine || defaultDeadline
         const challengeId = generateChallengeId()
-        const tx = await addChallenge(challengeId, goalText, deadLine, amount)
+        const tx = await addChallenge(challengeId, goalText, endTime, amount)
         const error = handleTxErrors(tx?.error)
         error && setError(error)
         !error && challengeWasAdded(challengeId)
         setIsFetching(false)
-      }, 0)
-    }
-  }
-
-  const challengeWasAdded = async (challengeId: string) => {
-    dispatchInformationBar(challengeId, ChallengeActionType.ADD_CHALLENGE)
-    setSlidesIndex(0)
-    setGoalText('')
-    setDeadLine(defaultDeadline())
-    setAmount('')
-    setIsFetching(false)
-    await slidesRef.current.slideTo(0, 0)
-    setSlidesDefaults()
-  }
+      }
+    },
+    [
+      addChallenge,
+      amount,
+      challengeWasAdded,
+      goalText,
+      deadLine,
+      defaultDeadline,
+    ],
+  )
 
   useEffect(() => {
-    setMinDate(defaultDeadline())
     setSlidesDefaults()
   }, [setSlidesDefaults])
 
@@ -142,7 +161,7 @@ export default function NewChallenge() {
           <IonSlide>
             <SlideContainer>
               <DateTimePicker
-                date={deadLine}
+                date={deadLine || defaultDeadline}
                 setDate={setDeadLine}
                 minDate={minDate}
               />

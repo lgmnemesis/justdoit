@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { formatEther } from '@ethersproject/units'
 import {
   ChevronDown,
@@ -99,21 +99,21 @@ export default function DisplayChallenge({
     [challenge?.id, areClaimedTokens],
   )
 
-  const shareChallenge = () => {
+  const shareChallenge = useCallback(() => {
     setIsShareModalOpen(true)
-  }
+  }, [])
 
-  const claimTokens = () => {
+  const claimTokens = useCallback(() => {
     setIsClaimModalOpen(true)
-  }
+  }, [])
 
-  const toggleDetails = () => {
+  const toggleDetails = useCallback(() => {
     setDetails((d) => !d)
-  }
+  }, [])
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     setModalStatus({ isOpen: true, actionDone: false })
-  }
+  }, [])
 
   const getButtonText = () => {
     switch (buttonOption) {
@@ -231,14 +231,12 @@ export default function DisplayChallenge({
             setButtonOption(ButtonOptionsEnum.castYourVote)
           }
         } else if (ownerResult === ChallengeResult.Failure) {
-          // TODO: Challenge is over. collect your initial support and rewards
           setButtonOption(ButtonOptionsEnum.challengeDone)
-        } else if (
-          supporterTimeLeftToVote > 0 &&
-          supporterTimeLeftToVote > sevenDays - twoDays
-        ) {
-          // TODO: Owner did not reported yet... waiting untill 2 days are done
+        } else if (supporterTimeLeftToVote > sevenDays - twoDays) {
+          // Owner did not submited their report yet... waiting up to 2 days
           setButtonOption(ButtonOptionsEnum.waitingForOwner)
+        } else if (supporterTimeLeftToVote <= sevenDays - twoDays) {
+          setButtonOption(ButtonOptionsEnum.challengeDone)
         }
       } else if (supporterTimeLeftToVote <= 0) {
         setButtonOption(ButtonOptionsEnum.challengeDone)
@@ -439,6 +437,7 @@ export default function DisplayChallenge({
           setModalStatus={setIsClaimModalOpen}
         />
       )}
+      {/* TODO: Share social button */}
       {!canClaimTokens && (
         <VoteOnChallenge
           challenge={challenge}

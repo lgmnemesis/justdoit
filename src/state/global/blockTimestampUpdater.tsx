@@ -13,7 +13,9 @@ export default function BlockNumberUpdater(): null {
     async (blockNumber: number) => {
       const provider: Web3Provider = library
       const blockData = await provider?.getBlock(blockNumber)
-      blockData && setBlockTimestamp(blockData.timestamp)
+      if (blockData) {
+        setBlockTimestamp(blockData.timestamp)
+      }
     },
     [setBlockTimestamp, library],
   )

@@ -60,19 +60,23 @@ export function useChallenges() {
 export function useSupportChallenges() {
   const { state, setState } = useGlobalState()
 
+  const unique = useCallback((challenges: SupportChallenge[]) => {
+    return [
+      ...new Map(challenges.map((c) => [`${c.id}${c.supporter}`, c])).values(),
+    ]
+  }, [])
+
   const setSupportChallenges = useCallback(
     (challenges: SupportChallenge[]) => {
-      const unique: SupportChallenge[] = [
-        ...new Map(
-          challenges.map((c) => [`${c.id}${c.supporter}`, c]),
-        ).values(),
-      ]
       setState((current) => ({
         ...current,
-        supportChallenges: unique,
+        supportChallenges: unique([
+          ...(current?.supportChallenges ?? []),
+          ...challenges,
+        ]),
       }))
     },
-    [setState],
+    [setState, unique],
   )
 
   const supportChallenges = state.supportChallenges
@@ -82,17 +86,23 @@ export function useSupportChallenges() {
 export function useOwnerReportResults() {
   const { state, setState } = useGlobalState()
 
+  const unique = useCallback((challenges: OwnerReportResult[]) => {
+    return [
+      ...new Map(challenges.map((c) => [`${c.id}${c.owner}`, c])).values(),
+    ]
+  }, [])
+
   const setOwnerReportResults = useCallback(
     (challenges: OwnerReportResult[]) => {
-      const unique: OwnerReportResult[] = [
-        ...new Map(challenges.map((c) => [`${c.id}${c.owner}`, c])).values(),
-      ]
       setState((current) => ({
         ...current,
-        ownerReportResults: unique,
+        ownerReportResults: unique([
+          ...(current?.ownerReportResults ?? []),
+          ...challenges,
+        ]),
       }))
     },
-    [setState],
+    [setState, unique],
   )
 
   const ownerReportResults = state.ownerReportResults
@@ -102,19 +112,23 @@ export function useOwnerReportResults() {
 export function useSupporterReportResults() {
   const { state, setState } = useGlobalState()
 
+  const unique = useCallback((challenges: SupporterReportResult[]) => {
+    return [
+      ...new Map(challenges.map((c) => [`${c.id}${c.supporter}`, c])).values(),
+    ]
+  }, [])
+
   const setSupporterReportResults = useCallback(
     (challenges: SupporterReportResult[]) => {
-      const unique: SupporterReportResult[] = [
-        ...new Map(
-          challenges.map((c) => [`${c.id}${c.supporter}`, c]),
-        ).values(),
-      ]
       setState((current) => ({
         ...current,
-        supporterReportResult: unique,
+        supporterReportResult: unique([
+          ...(current?.supporterReportResult ?? []),
+          ...challenges,
+        ]),
       }))
     },
-    [setState],
+    [setState, unique],
   )
 
   const supporterReportResults = state.supporterReportResult

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { IonModal } from '@ionic/react'
 import { X, ThumbsUp, ThumbsDown } from 'react-feather'
@@ -132,24 +132,50 @@ export default function VoteOnChallenge({
   const { dispatchInformationBar } = useInformationBar()
   const { addData } = useIpfs()
 
-  const handleVote = async (isSuccess: boolean) => {
-    const result = isSuccess ? ChallengeResult.Success : ChallengeResult.Failure
-    setIsFetching(true)
+  const reset = useCallback(() => {
+    setIsFetching(false)
     setError('')
-    let path = ''
-    if (report && report.length > 0) {
-      const file = report[0]
-      const ipfsPath = await addData(file.arrayBuffer)
-      if (!ipfsPath) {
-        setIsFetching(false)
-        setError(
-          'Can not store the image you selected. Not submiting your Report',
-        )
-        return
+  }, [])
+
+  const closeModalOnAction = useCallback(
+    (actionDone = false) => {
+      reset()
+      setModalStatus({ isOpen: false, actionDone })
+    },
+    [reset, setModalStatus],
+  )
+
+  const voteOnChallengeDone = useCallback(() => {
+    challenge?.id &&
+      dispatchInformationBar(
+        challenge.id,
+        isOwner
+          ? ChallengeActionType.OWNER_REPORT_CHALLENGE
+          : ChallengeActionType.VOTE_ON_CHALLENGE,
+      )
+    closeModalOnAction(true)
+  }, [challenge.id, closeModalOnAction, dispatchInformationBar, isOwner])
+
+  const handleVote = useCallback(
+    async (isSuccess: boolean) => {
+      const result = isSuccess
+        ? ChallengeResult.Success
+        : ChallengeResult.Failure
+      setIsFetching(true)
+      setError('')
+      let path = ''
+      if (report && report.length > 0) {
+        const file = report[0]
+        const ipfsPath = await addData(file.arrayBuffer)
+        if (!ipfsPath) {
+          setIsFetching(false)
+          setError(
+            'Can not store the image you selected. Not submiting your Report',
+          )
+          return
+        }
+        path = `${file.type}${ipfsPath}`
       }
-      path = `${file.type}${ipfsPath}`
-    }
-    setTimeout(async () => {
       const tx =
         challenge?.id &&
         (isOwner
@@ -159,36 +185,24 @@ export default function VoteOnChallenge({
       error && setError(error)
       tx && !error && voteOnChallengeDone()
       setIsFetching(false)
-    }, 0)
-  }
+    },
+    [
+      addData,
+      challenge.id,
+      isOwner,
+      ownerReportResult,
+      report,
+      supporterReportResult,
+      voteOnChallengeDone,
+    ],
+  )
 
-  const voteOnChallengeDone = () => {
-    challenge?.id &&
-      dispatchInformationBar(
-        challenge.id,
-        isOwner
-          ? ChallengeActionType.OWNER_REPORT_CHALLENGE
-          : ChallengeActionType.VOTE_ON_CHALLENGE,
-      )
-    closeModalOnAction(true)
-  }
-
-  const closeModalOnAction = (actionDone = false) => {
-    reset()
-    setModalStatus({ isOpen: false, actionDone })
-  }
-
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     reset()
     setModalStatus((current) => {
       return { isOpen: false, actionDone: current.actionDone }
     })
-  }
-
-  const reset = () => {
-    setIsFetching(false)
-    setError('')
-  }
+  }, [reset, setModalStatus])
 
   return (
     <ModalWrapper

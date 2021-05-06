@@ -9,6 +9,7 @@ import {
 } from '@material-ui/pickers'
 
 import styled from 'styled-components'
+import { useCallback } from 'react'
 
 export const GridWrapper = styled(Grid)`
   height: 100px;
@@ -39,9 +40,12 @@ export default function DateTimePicker({
   setDate: (date: Date | null) => void
   minDate: Date | null
 }) {
-  const handleDateChange = (date: Date | null) => {
-    setDate(date)
-  }
+  const handleDateChange = useCallback(
+    (selectedDate: Date | null) => {
+      setDate(selectedDate)
+    },
+    [setDate],
+  )
 
   return (
     <>

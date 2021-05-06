@@ -42,6 +42,7 @@ export default function ChallengesToSupport() {
   const { blockTimestamp } = useBlockTimestamp()
 
   const allChallenges: Challenge[] | undefined = useMemo(() => {
+    // console.count('moshe allChallenges 1')
     return challenges?.map((c) => {
       const cc = { ...c }
       const supporters = supportChallenges?.filter((sc) => sc.id === c.id)
@@ -80,6 +81,7 @@ export default function ChallengesToSupport() {
       cc.votedSuccess = votedSuccess
       cc.votedFailure = votedFailure
 
+      // console.count('moshe allChallenges 2')
       return { ...cc }
     })
   }, [
@@ -90,12 +92,14 @@ export default function ChallengesToSupport() {
   ])
 
   const ongoingChallenges: Challenge[] | undefined = useMemo(() => {
+    // console.count('moshe ongoingChallenges 1')
     return allChallenges?.filter((c) => {
       return c.owner === account
     })
   }, [allChallenges, account])
 
   const supportedChallenges: Challenge[] | undefined = useMemo(() => {
+    // console.count('moshe supportedChallenges 1')
     return allChallenges?.filter((c) => {
       return (
         account && c.supporters && c.supporters[account]?.supporter === account
@@ -104,6 +108,7 @@ export default function ChallengesToSupport() {
   }, [allChallenges, account])
 
   const challengesToSupport: Challenge[] | undefined = useMemo(() => {
+    // console.count('moshe challengesToSupport 1')
     const timestamp = blockTimestamp ?? 0
     return allChallenges?.filter((c) => {
       return (

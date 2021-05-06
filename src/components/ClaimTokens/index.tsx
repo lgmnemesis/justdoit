@@ -153,18 +153,17 @@ export default function ClaimTokens({
     [challenge?.id, areClaimedTokens],
   )
 
-  const closeModal = () => {
+  const reset = useCallback(() => {
+    setError('')
+  }, [])
+
+  const closeModal = useCallback(() => {
     reset()
     setModalStatus(false)
-  }
-
-  const reset = () => {
-    setError('')
-  }
+  }, [reset, setModalStatus])
 
   const getRewards = useCallback(async () => {
-    if (rewards) return
-    console.log('moshe1')
+    if (rewards || alreadyClaimedTokens) return
     setIsFetching(true)
     setError('')
     const tx =
@@ -174,10 +173,16 @@ export default function ClaimTokens({
         : await getSupporterRewards(challenge.id))
     const err = tx && handleTxErrors(tx.error, isOwner)
     err && setError(err)
-    console.log('tx:', tx)
     tx && setRewards(tx.tx)
     setIsFetching(false)
-  }, [challenge.id, getOwnerRewards, getSupporterRewards, isOwner, rewards])
+  }, [
+    challenge.id,
+    getOwnerRewards,
+    getSupporterRewards,
+    isOwner,
+    rewards,
+    alreadyClaimedTokens,
+  ])
 
   const handleWithdraw = useCallback(async () => {
     setIsFetching(true)
