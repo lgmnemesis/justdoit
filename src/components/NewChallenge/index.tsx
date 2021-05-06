@@ -26,7 +26,7 @@ const slideOpts = {
 }
 
 enum TITLE {
-  START = 'JUST DO IT',
+  START = 'Yes, You Can. Just do it',
   STEP_ONE = `WHAT'S YOUR GOAL?`,
   WHEN = `WHEN?`,
   PAY = `YOU PAY IF YOU FAIL`,
