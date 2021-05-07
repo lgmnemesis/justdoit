@@ -33,6 +33,8 @@ const TextSection = styled.div`
 
 const NiceColor = styled.span`
   color: ${({ theme }) => theme.nice1};
+  word-break: break-word;
+  max-width: 70%;
 `
 
 export default function HowRow({

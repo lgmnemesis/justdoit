@@ -36,8 +36,8 @@ import {
   useClaimedTokens,
   useInformationBar,
 } from '../../hooks/User'
-import { useWebSharing } from '../../hooks/User/useWebSharing'
 import ClaimTokens from '../ClaimTokens'
+import ShareChallenge from '../ShareChallenge'
 
 enum ButtonOptionsEnum {
   InitialState,
@@ -61,6 +61,7 @@ export default function DisplayChallenge({
   const [details, setDetails] = useState(false)
   const [reportingTimeLeft, setReportingTimeLeft] = useState('')
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false)
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [finalResult, setFinalResult] = useState(false)
   const [modalStatus, setModalStatus] = useState({
     isOpen: false,
@@ -72,7 +73,6 @@ export default function DisplayChallenge({
   const { blockTimestamp } = useBlockTimestamp()
   const { informationBar } = useInformationBar()
   const { areClaimedTokens } = useClaimedTokens()
-  const { webChallengeShare } = useWebSharing()
 
   const timestamp = (challenge.deadline?.toNumber() || 1) * 1000
   const deadline = useMemo(() => new Date(timestamp).toDateString(), [
@@ -102,10 +102,6 @@ export default function DisplayChallenge({
     () => challenge?.id && areClaimedTokens(challenge.id),
     [challenge?.id, areClaimedTokens],
   )
-
-  const shareChallenge = useCallback(() => {
-    webChallengeShare()
-  }, [webChallengeShare])
 
   const claimTokens = useCallback(() => {
     setIsClaimModalOpen(true)
@@ -401,7 +397,11 @@ export default function DisplayChallenge({
                 <Award /> {alreadyClaimedTokens ? 'Claimed' : 'Claim'}
               </ClaimButton>
             ) : (
-              <ShareButton onClick={shareChallenge}>
+              <ShareButton
+                onClick={() => {
+                  setIsShareModalOpen(true)
+                }}
+              >
                 <Share2 />
               </ShareButton>
             )}
@@ -439,6 +439,13 @@ export default function DisplayChallenge({
           account={account}
           isOpenModal={isClaimModalOpen}
           setModalStatus={setIsClaimModalOpen}
+        />
+      )}
+      {!canClaimTokens && (
+        <ShareChallenge
+          challenge={challenge}
+          isOpenModal={isShareModalOpen}
+          setModalStatus={setIsShareModalOpen}
         />
       )}
     </>

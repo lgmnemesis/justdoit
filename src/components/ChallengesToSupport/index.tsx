@@ -10,6 +10,7 @@ import {
   useSupporterReportResults,
 } from '../../hooks/Application'
 import { useBlockTimestamp } from '../../hooks/User'
+import { useSupportIdQueryParam } from '../../hooks/useRouterQueryParams'
 import { TYPE } from '../../theme'
 
 export const GridContainer = styled.div`
@@ -40,9 +41,9 @@ export default function ChallengesToSupport() {
   const { ownerReportResults } = useOwnerReportResults()
   const { supporterReportResults } = useSupporterReportResults()
   const { blockTimestamp } = useBlockTimestamp()
+  const idFromQueryParam = useSupportIdQueryParam()
 
   const allChallenges: Challenge[] | undefined = useMemo(() => {
-    // console.count('moshe allChallenges 1')
     return challenges?.map((c) => {
       const cc = { ...c }
       const supporters = supportChallenges?.filter((sc) => sc.id === c.id)
@@ -81,7 +82,6 @@ export default function ChallengesToSupport() {
       cc.votedSuccess = votedSuccess
       cc.votedFailure = votedFailure
 
-      // console.count('moshe allChallenges 2')
       return { ...cc }
     })
   }, [
@@ -92,14 +92,12 @@ export default function ChallengesToSupport() {
   ])
 
   const ongoingChallenges: Challenge[] | undefined = useMemo(() => {
-    // console.count('moshe ongoingChallenges 1')
     return allChallenges?.filter((c) => {
       return c.owner === account
     })
   }, [allChallenges, account])
 
   const supportedChallenges: Challenge[] | undefined = useMemo(() => {
-    // console.count('moshe supportedChallenges 1')
     return allChallenges?.filter((c) => {
       return (
         account && c.supporters && c.supporters[account]?.supporter === account
@@ -108,7 +106,6 @@ export default function ChallengesToSupport() {
   }, [allChallenges, account])
 
   const challengesToSupport: Challenge[] | undefined = useMemo(() => {
-    // console.count('moshe challengesToSupport 1')
     const timestamp = blockTimestamp ?? 0
     return allChallenges?.filter((c) => {
       return (
@@ -123,6 +120,12 @@ export default function ChallengesToSupport() {
       )
     })
   }, [allChallenges, blockTimestamp, account])
+
+  const challengeFromQueryParams = useMemo(() => {
+    return idFromQueryParam
+      ? allChallenges?.find((c) => c.id === idFromQueryParam)
+      : null
+  }, [idFromQueryParam, allChallenges])
 
   const renderSection = useCallback(
     (challenges: Challenge[], title: string) => {
@@ -148,7 +151,14 @@ export default function ChallengesToSupport() {
     [account],
   )
 
-  return (
+  return challengeFromQueryParams ? (
+    <>
+      <DisplayChallenge
+        challenge={challengeFromQueryParams}
+        account={account}
+      />
+    </>
+  ) : (
     <>
       {ongoingChallenges && ongoingChallenges?.length > 0 && (
         <>
@@ -156,12 +166,14 @@ export default function ChallengesToSupport() {
           <Spacing />
         </>
       )}
+
       {supportedChallenges && supportedChallenges?.length > 0 && (
         <>
           {renderSection(supportedChallenges, 'My Supported Challenges')}
           <Spacing />
         </>
       )}
+
       {challengesToSupport &&
         challengesToSupport?.length > 0 &&
         renderSection(challengesToSupport, 'Challenges to Support')}
