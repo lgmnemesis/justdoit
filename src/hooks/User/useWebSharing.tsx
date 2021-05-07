@@ -21,14 +21,17 @@ export function useWebSharing() {
     }
   }, [])
 
-  const webChallengeShare = useCallback(async () => {
-    const params: ShareParams = {
-      url: '',
-      title: '',
-      text: '',
-    }
-    return webShare(params)
-  }, [webShare])
+  const webChallengeShare = useCallback(
+    async (challengeId: string, challengeName: string) => {
+      const params: ShareParams = {
+        url: `${SHARE_URL}?support_id=${challengeId}`,
+        title: `Invitation to support`,
+        text: `You are invited to help me to achieve a personal goal, ${challengeName}`,
+      }
+      return webShare(params)
+    },
+    [webShare],
+  )
 
   return { webShare, webChallengeShare }
 }

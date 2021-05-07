@@ -74,9 +74,14 @@ export default function ShareChallenge({
 }) {
   const { webChallengeShare } = useWebSharing()
 
-  const shareChallenge = useCallback(() => {
-    webChallengeShare()
-  }, [webChallengeShare])
+  const shareChallenge = useCallback(
+    (challenge: Challenge) => {
+      challenge?.id &&
+        challenge?.name &&
+        webChallengeShare(challenge.id, challenge.name)
+    },
+    [webChallengeShare],
+  )
 
   const closeModal = useCallback(() => {
     setModalStatus(false)
@@ -105,7 +110,9 @@ export default function ShareChallenge({
 
           <Spacing />
           <ChallengeLine></ChallengeLine>
-          <button onClick={shareChallenge}>Temp share</button>
+          <button onClick={() => challenge?.id && shareChallenge(challenge)}>
+            Temp share
+          </button>
         </BodyInner>
       </BodyWrapper>
     </ModalWrapper>
