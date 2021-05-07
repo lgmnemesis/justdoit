@@ -138,6 +138,7 @@ export interface WalletInfo {
 }
 
 export const GITHUB_URL = 'https://github.com/lgmnemesis/justdoit-core'
+export const SHARE_URL = 'https://jdi.holonotes.io'
 
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   INJECTED: {

@@ -71,7 +71,7 @@ const howTo = [
       {
         id: 'how-1',
         text: 'Invite people to support you',
-        detailedText: `Any one can choose to support you on your challenge by staking their own tokens. 
+        detailedText: `Any one can choose to support you on your challenge by staking their own tokens. 
         The more supporters, the more incentives you are to achieve your goal`,
         show: true,
       },
@@ -84,22 +84,23 @@ const howTo = [
       {
         id: 'how-1',
         text: 'Report on your success or failure',
-        detailedText: `You will have up to 2 days to report back on your result. 
+        detailedText: `You will have up to 2 days to report back on your result. 
         Failing to do so means you lose your staking`,
         show: true,
       },
       {
         id: 'how-2',
         text: 'Supporters votes on your success or failure',
-        detailedText: `After your report submission, supporters will have up to 7 days time to look on your 
+        detailedText: `After your report submission, supporters will have up to 7 days time to look at your 
         report and vote on your success accordingly`,
         show: true,
       },
       {
         id: 'how-3',
         text: 'Collect initial staking and rewards',
-        detailedText: `On completing the challenge successfully, on top of your initial staking, 
-        you'll also receive all supporters staking and additional JDI tokens as a bonus on your success`,
+        detailedText: `After voting is over, on completing the challenge successfully,
+        on top of your initial staking, you'll also receive all supporters staking 
+        and additional JDI tokens as a bonus on your success`,
         show: true,
       },
     ],
@@ -108,13 +109,38 @@ const howTo = [
     id: 'how-sec-4',
     text: 'Tokenomics',
     steps: [
-      { id: 'how-1', text: 'JDI Tokens', detailedText: 'd1' },
+      {
+        id: 'how-1',
+        text: 'JDI Tokens',
+        detailedText: `JDI Tokens are used as additional incentives, 
+        rewarding challengers and supporters for contributing and participating in challenges`,
+      },
       {
         id: 'how-2',
-        text: 'What happen when failing to complete a challenge?',
-        detailedText: 'd2',
+        text: 'What happens when completing a challenge successfully?',
+        detailedText: `
+        Challenger
+          - Take back their initial staking.
+          - Receive all supporters contributions/staking.
+          - Receive JDI tokens as a bonus for their participation.
+          
+          Supporters
+          - Receive JDI tokens as a bonus for their support.
+        `,
       },
-      { id: 'how-3', text: 'How does voting works?', detailedText: 'd3' },
+      {
+        id: 'how-3',
+        text: 'What happens when failing to complete a challenge?',
+        detailedText: `
+        Challenger
+          - Lose their initial staking.
+          - Receive JDI tokens as a bonus for their participation.
+          
+        Supporters 
+          - Take back their initial supporting staking.
+          - Receive JDI tokens as a bonus for their support.
+        `,
+      },
     ],
   },
 ]

@@ -31,8 +31,12 @@ import ChallengeDetails from './ChallengeDetails'
 import SupportChallenge from '../SupportChallenge'
 import VoteOnChallenge from '../VoteOnChallenge'
 import { oneDayInSeconds, secondsToHm } from '../../utils'
-import { useBlockTimestamp, useClaimedTokens } from '../../hooks/User'
-import { useInformationBar } from '../../hooks/User'
+import {
+  useBlockTimestamp,
+  useClaimedTokens,
+  useInformationBar,
+} from '../../hooks/User'
+import { useWebSharing } from '../../hooks/User/useWebSharing'
 import ClaimTokens from '../ClaimTokens'
 
 enum ButtonOptionsEnum {
@@ -57,7 +61,6 @@ export default function DisplayChallenge({
   const [details, setDetails] = useState(false)
   const [reportingTimeLeft, setReportingTimeLeft] = useState('')
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false)
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [finalResult, setFinalResult] = useState(false)
   const [modalStatus, setModalStatus] = useState({
     isOpen: false,
@@ -69,6 +72,7 @@ export default function DisplayChallenge({
   const { blockTimestamp } = useBlockTimestamp()
   const { informationBar } = useInformationBar()
   const { areClaimedTokens } = useClaimedTokens()
+  const { webChallengeShare } = useWebSharing()
 
   const timestamp = (challenge.deadline?.toNumber() || 1) * 1000
   const deadline = useMemo(() => new Date(timestamp).toDateString(), [
@@ -100,8 +104,8 @@ export default function DisplayChallenge({
   )
 
   const shareChallenge = useCallback(() => {
-    setIsShareModalOpen(true)
-  }, [])
+    webChallengeShare()
+  }, [webChallengeShare])
 
   const claimTokens = useCallback(() => {
     setIsClaimModalOpen(true)
@@ -435,15 +439,6 @@ export default function DisplayChallenge({
           account={account}
           isOpenModal={isClaimModalOpen}
           setModalStatus={setIsClaimModalOpen}
-        />
-      )}
-      {/* TODO: Share social button */}
-      {!canClaimTokens && (
-        <VoteOnChallenge
-          challenge={challenge}
-          isOwner={challenge.owner === account}
-          isOpenModal={isShareModalOpen}
-          setModalStatus={setModalStatus}
         />
       )}
     </>

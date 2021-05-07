@@ -25,7 +25,10 @@ const LineBorder = styled.div`
 
 const TextSection = styled.div`
   padding-top: 10px;
-  word-break: break-word;
+  span {
+    white-space: pre-line;
+    word-break: break-word;
+  }
 `
 
 const NiceColor = styled.span`
