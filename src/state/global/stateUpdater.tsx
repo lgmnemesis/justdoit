@@ -8,6 +8,7 @@ import DarkModeUpdater from './darkModeUpdater'
 import { ETHBalanceUpdater } from './ETHBalanceUpdater'
 import TimeInSecondsTickerUpdater from './timeInSecondsTickerUpdater'
 import ClaimedTokensUpdater from './claimedTokensUpdater'
+import ChallengesByFilterUpdater from './challengesByFilterUpdater'
 
 export default function GlobalStateUpdater() {
   return (
@@ -21,6 +22,7 @@ export default function GlobalStateUpdater() {
       <SupporterReportResultUpdater />
       <TimeInSecondsTickerUpdater />
       <BlockTimestampUpdater />
+      <ChallengesByFilterUpdater />
       <ClaimedTokensUpdater />
     </>
   )

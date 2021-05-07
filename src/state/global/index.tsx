@@ -29,6 +29,10 @@ export interface GlobalStateInterface {
   timeInSeconds: number
   blockTimestamp: number
   claimedTokens: ClaimedTokens
+  allChallenges: Challenge[]
+  ongoingChallenges: Challenge[]
+  supportedChallenges: Challenge[]
+  challengesToSupport: Challenge[]
 }
 
 const GlobalStateContext = createContext({

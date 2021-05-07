@@ -215,3 +215,38 @@ export function useClaimedTokens() {
     setClaimedTokens,
   }
 }
+
+export function useChallengesByFilter() {
+  const { state, setState } = useGlobalState()
+
+  const setChallengesByFilter = useCallback(
+    (
+      allChallenges,
+      ongoingChallenges,
+      supportedChallenges,
+      challengesToSupport,
+    ) => {
+      console.count('moshe state')
+      setState((current) => ({
+        ...current,
+        allChallenges,
+        ongoingChallenges,
+        supportedChallenges,
+        challengesToSupport,
+      }))
+    },
+    [setState],
+  )
+
+  const allChallenges = state.allChallenges
+  const ongoingChallenges = state.ongoingChallenges
+  const supportedChallenges = state.supportedChallenges
+  const challengesToSupport = state.challengesToSupport
+  return {
+    allChallenges,
+    ongoingChallenges,
+    supportedChallenges,
+    challengesToSupport,
+    setChallengesByFilter,
+  }
+}
