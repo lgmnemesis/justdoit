@@ -30,7 +30,6 @@ const Spacing = styled.div`
 export default function ChallengesToSupport() {
   const { account } = useActiveWeb3React()
   const {
-    allChallenges,
     ongoingChallenges,
     supportedChallenges,
     challengesToSupport,
