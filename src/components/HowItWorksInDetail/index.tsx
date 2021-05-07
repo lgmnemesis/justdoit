@@ -47,65 +47,74 @@ const Spacing = styled.div`
 const howTo = [
   {
     id: 'how-sec-1',
-    text: 'First, create a challenge',
+    text: 'First, create a challenge',
     steps: [
-      {
-        id: 'how-1',
-        text: 'Enter your goal',
-        detailedText: 'd1',
-      },
+      { id: 'how-1', text: 'Enter your goal', detailedText: '' },
       {
         id: 'how-2',
-        text: 'Set a deadline for the completion of the goal',
-        detailedText: 'd2',
+        text: 'Set a deadline for the completion of the goal',
+        detailedText: '',
       },
       {
         id: 'how-3',
-        text: 'Set the amount of ETH you are willing to stake',
-        detailedText: '',
+        text: 'Set the amount of ETH you are willing to stake',
+        detailedText: `Put your money where your mouth is. Stake as much as or as little as you want. 
+        You will only lose your staking if you fail to complete the challenge`,
+        show: true,
       },
     ],
   },
   {
     id: 'how-sec-2',
-    text: 'While challenge is in progress',
+    text: 'While challenge is in progress',
     steps: [
       {
         id: 'how-1',
-        text: '1. Enter your goal',
-        detailedText: 'd1',
-      },
-      {
-        id: 'how-2',
-        text: '2. Set a deadline for the completion of the goal',
-        detailedText: 'd2',
-      },
-      {
-        id: 'how-3',
-        text: '3. Set the amount of ETH you are willing to stake',
-        detailedText: '',
+        text: 'Invite people to support you',
+        detailedText: `Any one can choose to support you on your challenge by staking their own tokens. 
+        The more supporters, the more incentives you are to achieve your goal`,
+        show: true,
       },
     ],
   },
   {
     id: 'how-sec-3',
-    text: 'When challenge ends',
+    text: 'When challenge ends',
     steps: [
       {
         id: 'how-1',
-        text: '1. Enter your goal',
-        detailedText: 'd1',
+        text: 'Report on your success or failure',
+        detailedText: `You will have up to 2 days to report back on your result. 
+        Failing to do so means you lose your staking`,
+        show: true,
       },
       {
         id: 'how-2',
-        text: '2. Set a deadline for the completion of the goal',
-        detailedText: 'd2',
+        text: 'Supporters votes on your success or failure',
+        detailedText: `After your report submission, supporters will have up to 7 days time to look on your 
+        report and vote on your success accordingly`,
+        show: true,
       },
       {
         id: 'how-3',
-        text: '3. Set the amount of ETH you are willing to stake',
-        detailedText: '',
+        text: 'Collect initial staking and rewards',
+        detailedText: `On completing the challenge successfully, on top of your initial staking, 
+        you'll also receive all supporters staking and additional JDI tokens as a bonus on your success`,
+        show: true,
       },
+    ],
+  },
+  {
+    id: 'how-sec-4',
+    text: 'Tokenomics',
+    steps: [
+      { id: 'how-1', text: 'JDI Tokens', detailedText: 'd1' },
+      {
+        id: 'how-2',
+        text: 'What happen when failing to complete a challenge?',
+        detailedText: 'd2',
+      },
+      { id: 'how-3', text: 'How does voting works?', detailedText: 'd3' },
     ],
   },
 ]
@@ -143,6 +152,7 @@ export default function HowItWorksInDetail() {
                           key={step.id}
                           text={step.text}
                           detailedText={step.detailedText}
+                          show={step.show}
                         />
                       )
                     })}
