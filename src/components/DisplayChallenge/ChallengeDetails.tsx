@@ -71,21 +71,23 @@ export default function ChallengeDetails({
         </ChallengeLine>
       )}
 
-      <ChallengeLine>
-        {timeLeftText !== '' ? (
-          <LightColor>Challenge ends in</LightColor>
-        ) : (
-          <TYPE.Yellow>Challenge ended</TYPE.Yellow>
-        )}
-
-        <ChallengeEndLine>
+      {blockTimestamp ? (
+        <ChallengeLine>
           {timeLeftText !== '' ? (
-            <PinkColor>{timeLeftText}</PinkColor>
+            <LightColor>Challenge ends in</LightColor>
           ) : (
-            <TYPE.Yellow>{timeLeftText}</TYPE.Yellow>
+            <TYPE.Yellow>Challenge ended</TYPE.Yellow>
           )}
-        </ChallengeEndLine>
-      </ChallengeLine>
+
+          <ChallengeEndLine>
+            {timeLeftText !== '' ? (
+              <PinkColor>{timeLeftText}</PinkColor>
+            ) : (
+              <TYPE.Yellow>{timeLeftText}</TYPE.Yellow>
+            )}
+          </ChallengeEndLine>
+        </ChallengeLine>
+      ) : null}
     </>
   )
 }

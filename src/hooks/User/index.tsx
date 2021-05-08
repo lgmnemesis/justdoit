@@ -226,7 +226,6 @@ export function useChallengesByFilter() {
       supportedChallenges,
       challengesToSupport,
     ) => {
-      console.count('moshe state')
       setState((current) => ({
         ...current,
         allChallenges,
