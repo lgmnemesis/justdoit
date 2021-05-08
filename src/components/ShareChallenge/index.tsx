@@ -3,13 +3,17 @@ import { Dispatch, SetStateAction, useCallback } from 'react'
 import { X } from 'react-feather'
 import styled from 'styled-components'
 import { Challenge } from '../../constants'
-import { ChallengeLine, Spacing } from '../DisplayChallenge/styles'
+import { LightColor, PinkColor, Spacing } from '../DisplayChallenge/styles'
 import { TYPE } from '../../theme'
 import { useWebSharing } from '../../hooks/User/useWebSharing'
+import { ButtonLight } from '../Button'
 
 const ModalWrapper = styled(IonModal)`
   .modal-wrapper {
     --background: ${({ theme }) => theme.bg2};
+  }
+  .ion-page {
+    height: 100%;
   }
 `
 
@@ -50,7 +54,7 @@ const HeaderRow = styled.div`
 const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   height: 100%;
 `
@@ -58,9 +62,27 @@ const BodyWrapper = styled.div`
 const BodyInner = styled.div`
   width: 100%;
   padding: 20px 50px;
+  margin-bottom: 50px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 20px 20px;
   `};
+`
+const TitleLine = styled.div`
+  padding-bottom: 40px;
+`
+
+const Line = styled.div`
+  padding: 20px 0;
+`
+
+const InviteButton = styled(ButtonLight)`
+  max-width: 250px;
+`
+
+const Center = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 export default function ShareChallenge({
@@ -99,20 +121,41 @@ export default function ShareChallenge({
         <CloseIcon onClick={closeModal}>
           <CloseColor />
         </CloseIcon>
-        <HeaderRow>Share Challenge</HeaderRow>
+        <HeaderRow>Ask for Supporters</HeaderRow>
       </ModalHeader>
 
       <BodyWrapper>
         <BodyInner>
-          <ChallengeLine>
-            <TYPE.Main>{challenge.name}</TYPE.Main>
-          </ChallengeLine>
-
+          <TYPE.MediumHeader>
+            <LightColor>
+              <TitleLine>Get support from your friends and family</TitleLine>
+            </LightColor>
+          </TYPE.MediumHeader>
+          <Line>
+            <TYPE.Main>
+              <LightColor>
+                Invite a friend to check on your progress and hold you
+                accountable.
+              </LightColor>
+            </TYPE.Main>
+          </Line>
+          <Line>
+            <TYPE.Yellow>
+              The more supporters you have, the higher the gains.
+            </TYPE.Yellow>
+          </Line>
           <Spacing />
-          <ChallengeLine></ChallengeLine>
-          <button onClick={() => challenge?.id && shareChallenge(challenge)}>
-            Temp share
-          </button>
+          <Line>
+            <TYPE.Main>Who will you invite?</TYPE.Main>
+          </Line>
+          <Spacing />
+          <Center>
+            <InviteButton
+              onClick={() => challenge?.id && shareChallenge(challenge)}
+            >
+              Invite Supporters
+            </InviteButton>
+          </Center>
         </BodyInner>
       </BodyWrapper>
     </ModalWrapper>

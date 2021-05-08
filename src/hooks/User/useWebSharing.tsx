@@ -26,7 +26,7 @@ export function useWebSharing() {
       const params: ShareParams = {
         url: `${SHARE_URL}?support_id=${challengeId}`,
         title: `Invitation to support`,
-        text: `You are invited to help me to achieve a personal goal, ${challengeName}`,
+        text: `I invite you to help me achieve a personal goal, ${challengeName}`,
       }
       return webShare(params)
     },
