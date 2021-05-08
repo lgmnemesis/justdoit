@@ -91,7 +91,7 @@ const howTo = [
       {
         id: 'how-2',
         text: 'Supporters votes on your success or failure',
-        detailedText: `After your report submission, supporters will have up to 7 days time to look at your 
+        detailedText: `After your report submission, supporters will have up to 7 days window to look at your 
         report and vote on your success accordingly`,
         show: true,
       },
@@ -99,7 +99,7 @@ const howTo = [
         id: 'how-3',
         text: 'Collect initial staking and rewards',
         detailedText: `After voting is over, on completing the challenge successfully,
-        on top of your initial staking, you'll also receive all supporters staking 
+        on top of your initial staking, you'll also receive all supporters contributions 
         and additional JDI tokens as a bonus on your success`,
         show: true,
       },
@@ -137,7 +137,7 @@ const howTo = [
           - Receive JDI tokens as a bonus for their participation.
           
         Supporters 
-          - Take back their initial supporting staking.
+          - Take back their initial contributions.
           - Receive JDI tokens as a bonus for their support.
         `,
       },
@@ -157,8 +157,8 @@ export default function HowItWorksInDetail() {
             <HeaderText>
               <p>Ready to finally reach your goals?</p>
               <p>
-                By commiting to a challenge and staking upon completion of that
-                challenge, you acknowledge what it’ll take to accomplish it, and
+                By commiting to a challenge and staking your own tokens on your
+                success, you acknowledge what it’ll take to accomplish it, and
                 leveraging the power of putting money on the line to turn that
                 goal into a reality.
               </p>
