@@ -168,6 +168,19 @@ export function useJustDoItContractService() {
     }
   }
 
+  const getVersion = async () => {
+    try {
+      if (!justDoItContract) return null
+      const estimatedGas = await justDoItContract.estimateGas.getVersion()
+      const tx = await justDoItContract?.getVersion({
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
+      return { tx: tx, error: null }
+    } catch (error) {
+      return { tx: null, error: error }
+    }
+  }
+
   return {
     addChallenge,
     supportChallenge,
@@ -177,5 +190,6 @@ export function useJustDoItContractService() {
     getSupporterRewards,
     collectOwnerRewards,
     collectSupporterRewards,
+    getVersion,
   }
 }

@@ -59,7 +59,7 @@
       },
       {
         "indexed": false,
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V2.Result",
         "name": "result",
         "type": "uint8"
       },
@@ -115,7 +115,7 @@
       },
       {
         "indexed": false,
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V2.Result",
         "name": "result",
         "type": "uint8"
       }
@@ -159,7 +159,7 @@
         "type": "uint256"
       },
       {
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V2.Result",
         "name": "resultFromOwner",
         "type": "uint8"
       },
@@ -252,7 +252,7 @@
         "type": "bool"
       },
       {
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V2.Result",
         "name": "result",
         "type": "uint8"
       }
@@ -304,7 +304,7 @@
     "name": "getFinalResult",
     "outputs": [
       {
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V2.Result",
         "name": "",
         "type": "uint8"
       }
@@ -429,7 +429,7 @@
         "type": "bytes32"
       },
       {
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V2.Result",
         "name": "_result",
         "type": "uint8"
       }
@@ -447,7 +447,7 @@
         "type": "bytes32"
       },
       {
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V2.Result",
         "name": "_result",
         "type": "uint8"
       },

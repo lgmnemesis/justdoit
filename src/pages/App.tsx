@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useCallback, useEffect } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import Header from '../components/Header'
@@ -6,6 +6,7 @@ import InformationBar from '../components/InformationBar'
 import Web3ReactManager from '../components/Web3ReactManager'
 import HomePage from './Home'
 import HelpPage from './Help'
+import { useJustDoItContractService } from '../services/JustDoItContractService'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -39,6 +40,17 @@ const Marginer = styled.div`
 `
 
 export default function App() {
+  const { getVersion } = useJustDoItContractService()
+
+  const getContractVersion = useCallback(async () => {
+    const version = await getVersion()
+    console.log('Contract Version:', version)
+  }, [getVersion])
+
+  useEffect(() => {
+    getContractVersion()
+  }, [getContractVersion])
+
   return (
     <Suspense fallback={null}>
       <AppWrapper>
