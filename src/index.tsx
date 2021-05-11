@@ -23,6 +23,7 @@ const GOOGLE_ANALYTICS_ID: string | undefined =
 if (typeof GOOGLE_ANALYTICS_ID === 'string') {
   ReactGA.initialize(GOOGLE_ANALYTICS_ID)
   console.log('GA:', GOOGLE_ANALYTICS_ID)
+  ReactGA.pageview('index.html')
   ReactGA.set({
     customBrowserType: !isMobile
       ? 'desktop'

@@ -102,6 +102,7 @@ export default function NewChallenge() {
         const endTime = deadLine || defaultDeadline
         const challengeId = generateChallengeId()
         const tx = await addChallenge(challengeId, goalText, endTime, amount)
+        console.log('tx:', tx)
         const error = handleTxErrors(tx?.error)
         error && setError(error)
         !error && challengeWasAdded(challengeId)

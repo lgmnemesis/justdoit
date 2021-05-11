@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { useWeb3React } from '@web3-react/core'
 import { useJustDoItContract } from '../../hooks/contracts/useContract'
 import {
   Challenge,
@@ -9,11 +8,12 @@ import {
 } from '../../constants'
 import { useChallenges } from '../../hooks/Application'
 import { useInformationBar } from '../../hooks/User'
+import { useActiveWeb3React } from '../../hooks'
 
 export default function ChallengesUpdater(): null {
-  const { account, library, chainId } = useWeb3React()
+  const { account, library, chainId } = useActiveWeb3React()
   const contract = useJustDoItContract()
-  const { setChallenges } = useChallenges()
+  const { addChallenges, setChallenges } = useChallenges()
   const { informationBar, dispatchInformationBar } = useInformationBar()
   const eventName = JustDoItEvents.ChallengeAddedEvent
 
@@ -36,18 +36,27 @@ export default function ChallengesUpdater(): null {
           )
       }
 
-      setChallenges([{ ...challenge }])
+      addChallenges([{ ...challenge }])
     },
-    [setChallenges, informationBar, dispatchInformationBar],
+    [addChallenges, informationBar, dispatchInformationBar],
   )
 
   useEffect(() => {
+    setChallenges([])
     filter &&
       contract?.queryFilter(filter, 0).then((q: any) => {
         const challenges: Challenge[] = q?.map((c: any) => c.args)
-        setChallenges([...challenges])
+        addChallenges([...challenges])
       })
-  }, [contract, filter, setChallenges, library, account, chainId])
+  }, [
+    setChallenges,
+    addChallenges,
+    filter,
+    contract,
+    library,
+    account,
+    chainId,
+  ])
 
   useEffect(() => {
     contract?.on(eventName, (...params) => {

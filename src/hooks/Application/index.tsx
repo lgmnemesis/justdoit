@@ -47,6 +47,16 @@ export function useChallenges() {
     (challenges: Challenge[]) => {
       setState((current) => ({
         ...current,
+        challenges: unique([...challenges]),
+      }))
+    },
+    [setState, unique],
+  )
+
+  const addChallenges = useCallback(
+    (challenges: Challenge[]) => {
+      setState((current) => ({
+        ...current,
         challenges: unique([...(current?.challenges ?? []), ...challenges]),
       }))
     },
@@ -54,7 +64,7 @@ export function useChallenges() {
   )
 
   const challenges = state.challenges
-  return { challenges, setChallenges }
+  return { challenges, addChallenges, setChallenges }
 }
 
 export function useSupportChallenges() {

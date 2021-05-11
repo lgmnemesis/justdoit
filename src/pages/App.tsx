@@ -43,7 +43,8 @@ export default function App() {
   const { getVersion } = useJustDoItContractService()
 
   const getContractVersion = useCallback(async () => {
-    const version = await getVersion()
+    const txObj = await getVersion()
+    const version = txObj?.tx
     console.log('Contract Version:', version)
   }, [getVersion])
 
