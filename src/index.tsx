@@ -22,7 +22,6 @@ const GOOGLE_ANALYTICS_ID: string | undefined =
   process.env.REACT_APP_GOOGLE_ANALYTICS_ID
 if (typeof GOOGLE_ANALYTICS_ID === 'string') {
   ReactGA.initialize(GOOGLE_ANALYTICS_ID)
-  console.log('GA:', GOOGLE_ANALYTICS_ID)
   ReactGA.pageview('index.html')
   ReactGA.set({
     customBrowserType: !isMobile
@@ -33,6 +32,7 @@ if (typeof GOOGLE_ANALYTICS_ID === 'string') {
   })
 } else {
   ReactGA.initialize('test', { testMode: true, debug: true })
+  ReactGA.pageview('index.html')
 }
 
 window.addEventListener('error', (error) => {
