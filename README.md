@@ -1,3 +1,29 @@
 # Just Do It UI Interface
+React frontend interface for JustDoIt -- a decentralized goal achiever on Ethereum.
 
-JustDoIt forces you to reach your goals, or pay if you don’t.
+JustDoIt drives you to reach your goals, by putting your tokens on the line.
+
+- Website: [jdi.holonotes.io](https://jdi.holonotes.io/)
+
+## How it works
+1. Set a goal you want to achive, challenge yourself. 
+2. Set a deadline. 
+3. Stake your tokens.
+
+- Complete the challenge and earn reword tokens.
+- Fail to complete and lose your staking.
+
+
+## Development
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Run
+
+```bash
+npm start
+```
