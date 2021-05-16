@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: holonotes.io
+Token: fc87a44cf9ce6a48734c41385e3c62801cb2aaae34cb2cdee3c592209079de97

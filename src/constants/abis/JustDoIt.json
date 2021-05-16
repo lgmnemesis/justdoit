@@ -59,7 +59,7 @@
       },
       {
         "indexed": false,
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V3_0_1.Result",
         "name": "result",
         "type": "uint8"
       },
@@ -115,7 +115,7 @@
       },
       {
         "indexed": false,
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V3_0_1.Result",
         "name": "result",
         "type": "uint8"
       }
@@ -159,7 +159,7 @@
         "type": "uint256"
       },
       {
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V3_0_1.Result",
         "name": "resultFromOwner",
         "type": "uint8"
       },
@@ -187,11 +187,6 @@
         "internalType": "bool",
         "name": "gotFees",
         "type": "bool"
-      },
-      {
-        "internalType": "uint256",
-        "name": "supporters",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -220,41 +215,6 @@
         "internalType": "contract JDIToken",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "supporters",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "amountStaked",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "gotRewards",
-        "type": "bool"
-      },
-      {
-        "internalType": "enum JustDoIt.Result",
-        "name": "result",
-        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -304,7 +264,7 @@
     "name": "getFinalResult",
     "outputs": [
       {
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V3_0_1.Result",
         "name": "",
         "type": "uint8"
       }
@@ -389,6 +349,43 @@
         "internalType": "bytes32",
         "name": "_id",
         "type": "bytes32"
+      }
+    ],
+    "name": "getChallengeSupporter",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amountStaked",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "gotRewards",
+            "type": "bool"
+          },
+          {
+            "internalType": "enum JustDoIt_V3_0_1.Result",
+            "name": "result",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct JustDoIt_V3_0_1.Supporting",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_id",
+        "type": "bytes32"
       },
       {
         "internalType": "string",
@@ -429,7 +426,7 @@
         "type": "bytes32"
       },
       {
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V3_0_1.Result",
         "name": "_result",
         "type": "uint8"
       }
@@ -447,7 +444,7 @@
         "type": "bytes32"
       },
       {
-        "internalType": "enum JustDoIt.Result",
+        "internalType": "enum JustDoIt_V3_0_1.Result",
         "name": "_result",
         "type": "uint8"
       },
